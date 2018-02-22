@@ -90,4 +90,3 @@ Ctrl+Shift+, 提前当前内容
 __PS__ 参考:
 1. 快捷键总结:[http://blog.csdn.net/u012771929/article/details/30030249](http://blog.csdn.net/u012771929/article/details/30030249)
 2. st3使用配置:[http://www.jianshu.com/p/62241c7ecec9](http://www.jianshu.com/p/62241c7ecec9)
-ssda
