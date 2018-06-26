@@ -2,8 +2,7 @@
 title: st3使用配置
 date: 2017-01-22 11:16:39
 categories: 
-- 笔记
-- 配置
+- sublime3使用笔记
 tags:
 - 笔记
 ---

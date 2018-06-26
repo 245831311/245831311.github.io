@@ -2,8 +2,7 @@
 title: hexo的搭建与使用
 date: 2017-02-22 12:00:00
 categories: 
-- 笔记
-- 配置
+- hexo总结
 tags:
 - 笔记
 ---

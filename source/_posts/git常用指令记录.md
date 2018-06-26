@@ -2,8 +2,7 @@
 title: git指令用法
 date: 2017-02-23 11:16:39
 categories: 
-- 笔记
-- 学习
+- git总结
 tags:
 - 笔记
 ---
