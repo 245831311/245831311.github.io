@@ -424,6 +424,208 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/30/nginx搭建与部署/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/30/nginx搭建与部署/" itemprop="url">nginx的搭建</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-30T12:00:00+08:00">
+                2017-11-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nginx总结/" itemprop="url" rel="index">
+                    <span itemprop="name">nginx总结</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="nginx是什么"><a href="#nginx是什么" class="headerlink" title="nginx是什么"></a>nginx是什么</h3><p>nginx是一个开源且高性能、可靠的http中间件、代理服务</p>
+<h3 id="为什么使用nginx（详细在下一章总结）"><a href="#为什么使用nginx（详细在下一章总结）" class="headerlink" title="为什么使用nginx（详细在下一章总结）"></a>为什么使用nginx（详细在下一章总结）</h3><ul>
+<li>io多路复用(select,epoll等模型实现)</li>
+<li>cpu亲和性</li>
+<li>轻量级</li>
+</ul>
+<h3 id="nginx的使用场景-（详细在另外一章总结）"><a href="#nginx的使用场景-（详细在另外一章总结）" class="headerlink" title="nginx的使用场景 （详细在另外一章总结）"></a>nginx的使用场景 （详细在另外一章总结）</h3><ol>
+<li>代理服务<ol>
+<li>正向代理</li>
+<li>反向代理</li>
+</ol>
+</li>
+<li>缓存服务</li>
+<li>https服务</li>
+<li>静态web服务<ol>
+<li>跨域</li>
+<li>防盗链</li>
+<li>客户端缓存</li>
+</ol>
+</li>
+<li>动静分离</li>
+<li>nginx+lua <ol>
+<li>流量监控</li>
+<li>waf</li>
+<li>灰度发布(建议使用openresty)</li>
+</ol>
+</li>
+<li>rewrite规则<ol>
+<li>后台维护页面</li>
+<li>seo搜索优化</li>
+<li>安全（伪静态）</li>
+<li>url访问跳转（新旧域名替换）</li>
+</ol>
+</li>
+</ol>
+<h3 id="nginx下linux的部署-fedora27"><a href="#nginx下linux的部署-fedora27" class="headerlink" title="nginx下linux的部署(fedora27)"></a>nginx下linux的部署(fedora27)</h3><pre><code>简单说明下安装nginx的所需要的依赖，并不做详细讲解
+</code></pre><ol>
+<li>下载prec,zlib,openssl</li>
+<li>yum install -y gcc g++ (c编译工具)</li>
+<li>yum install -y pcre pcre-devel(重写rewrite,正则表达式)</li>
+<li>yum install -y zlib zlib-devel(gzip压缩)</li>
+<li>yum install -y openssl openssl-devel</li>
+<li>下载nginx（可到官网上下载.tar文件）</li>
+<li>解压 tar -zxvf nginx-xxxx.tar.gz</li>
+<li>进入解压目录，并执行./configure –prefix=/usr/local/nginx  </li>
+<li>make &amp;&amp; make install</li>
+</ol>
+<h3 id="nginx的目录配置说明"><a href="#nginx的目录配置说明" class="headerlink" title="nginx的目录配置说明"></a>nginx的目录配置说明</h3><p>├── auto            自动检测系统环境以及编译相关的脚本<br><br>│   ├── cc          关于编译器相关的编译选项的检测脚本<br><br>│   ├── lib         nginx编译所需要的一些库的检测脚本<br><br>│   ├── os          与平台相关的一些系统参数与系统调用相关的检测<br><br>│   └── types       与数据类型相关的一些辅助脚本<br><br>├── conf            存放默认配置文件，在make install后，会拷贝到安装目录中去<br><br>├── contrib         存放一些实用工具，如geo配置生成工具（geo2nginx.pl）<br><br>├── html            存放默认的网页文件，在make install后，会拷贝到安装目录中去<br><br>├── man             nginx的man手册<br><br>└── src             存放nginx的源代码<br><br>    ├── core        nginx的核心源代码，包括常用数据结构的定义，以及nginx初始化运行的核心代码如main函数<br><br>    ├── event       对系统事件处理机制的封装，以及定时器的实现相关代码<br><br>    │   └── modules 不同事件处理方式的模块化，如select、poll、epoll、kqueue等<br><br>    ├── http        nginx作为http服务器相关的代码<br><br>    │   └── modules 包含http的各种功能模块<br><br>    ├── mail        nginx作为邮件代理服务器相关的代码<br><br>    ├── misc        一些辅助代码，测试c++头的兼容性，以及对google_perftools的支持<br><br>    └── os          主要是对各种不同体系统结构所提供的系统函数的封装，对外提供统一的系统调用接口<br></p>
+<h3 id="nginx相关命令"><a href="#nginx相关命令" class="headerlink" title="nginx相关命令"></a>nginx相关命令</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./nginx 启动</span><br><span class="line">./nginx -s stop 关闭</span><br><span class="line">./nginx -s reload 重启</span><br><span class="line">./nginx -tc nginx 配置文件   检测nginx配置文件语法</span><br></pre></td></tr></table></figure>
+<h3 id="注意"><a href="#注意" class="headerlink" title=" 注意 "></a><strong><font color="red"> 注意 </font></strong></h3><ul>
+<li>在重新编译nginx时候，先将原有的nginx二进制文件备份,再执行./configure &amp;&amp; make &amp;&amp; make install 以免被新的nginx覆盖</li>
+<li>若直接使用yum最新版本的openssl,则会在编译某些旧版本nginx的时候出现不兼容的情况。原因是由于openssl新版本改动得挺大导致。解决方案<ul>
+<li>升级nginx版本</li>
+<li>降级openssl的版本(额外章会记录如何降级，这里遇到了一个坑) </li>
+</ul>
+</li>
+</ul>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
+<li><a href="http://tengine.taobao.org/book/" target="_blank" rel="noopener">nginx从入门到精通</a></li>
+<li><a href="http://www.nginx.cn/doc/" target="_blank" rel="noopener">nginx中文官方文档</a></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/23/git常用指令记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -478,19 +680,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/学习/" itemprop="url" rel="index">
-                    <span itemprop="name">学习</span>
+                  <a href="/categories/git总结/" itemprop="url" rel="index">
+                    <span itemprop="name">git总结</span>
                   </a>
                 </span>
 
@@ -632,19 +823,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/配置/" itemprop="url" rel="index">
-                    <span itemprop="name">配置</span>
+                  <a href="/categories/hexo总结/" itemprop="url" rel="index">
+                    <span itemprop="name">hexo总结</span>
                   </a>
                 </span>
 
@@ -793,19 +973,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">笔记</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/笔记/配置/" itemprop="url" rel="index">
-                    <span itemprop="name">配置</span>
+                  <a href="/categories/sublime3使用笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">sublime3使用笔记</span>
                   </a>
                 </span>
 
@@ -946,7 +1115,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -957,7 +1126,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -968,7 +1137,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
