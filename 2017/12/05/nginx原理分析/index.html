@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="笔记," />
+  <meta name="keywords" content="总结," />
 
 
 
@@ -79,18 +79,20 @@
 
 
 
-<meta name="description" content="Hexo 是什么hexo是基于node.js的一个简洁的博客框架。hexo是一款使用markdown渲染，快速生成静态页面的框架。 为什么使用hexo作为博客 不走数据库，可以通过md作为存储文件 高效快速，生成和渲染静态页面快 部署发布简单，操作简便  hexo部署一. 安装node.js（网上很多，不详细解释）安装完毕后可以输入node -v查看是否安装成功. 二. 安装hexo1234567">
-<meta name="keywords" content="笔记">
+<meta name="description" content="本章主要记录一下我对nginx原理的理解，以及相关的重点与难点 nginx优点 IO多路复用（重点）前一章中提及到了nginx能支撑高并发的一个主要原因就是使用到io多路复用的这种技术。  什么是io多路复用？定义上：获取并监听多个fd(文件描述符)，通过单个线程内完成IO的读写,复用指的是线程例子:某快递公司快递员（处理线程），寄件（IO网络请求）   例子一：快递员不知道哪家需要寄件，逐间逐">
+<meta name="keywords" content="总结">
 <meta property="og:type" content="article">
-<meta property="og:title" content="hexo的搭建与使用">
-<meta property="og:url" content="http://yoursite.com/2017/02/22/hexo用法/index.html">
+<meta property="og:title" content="nginx原理分析">
+<meta property="og:url" content="http://yoursite.com/2017/12/05/nginx原理分析/index.html">
 <meta property="og:site_name" content="Jay-Luo">
-<meta property="og:description" content="Hexo 是什么hexo是基于node.js的一个简洁的博客框架。hexo是一款使用markdown渲染，快速生成静态页面的框架。 为什么使用hexo作为博客 不走数据库，可以通过md作为存储文件 高效快速，生成和渲染静态页面快 部署发布简单，操作简便  hexo部署一. 安装node.js（网上很多，不详细解释）安装完毕后可以输入node -v查看是否安装成功. 二. 安装hexo1234567">
+<meta property="og:description" content="本章主要记录一下我对nginx原理的理解，以及相关的重点与难点 nginx优点 IO多路复用（重点）前一章中提及到了nginx能支撑高并发的一个主要原因就是使用到io多路复用的这种技术。  什么是io多路复用？定义上：获取并监听多个fd(文件描述符)，通过单个线程内完成IO的读写,复用指的是线程例子:某快递公司快递员（处理线程），寄件（IO网络请求）   例子一：快递员不知道哪家需要寄件，逐间逐">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-26T06:31:53.068Z">
+<meta property="og:image" content="http://yoursite.com/2017/12/select.png">
+<meta property="og:updated_time" content="2018-06-27T03:31:29.583Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hexo的搭建与使用">
-<meta name="twitter:description" content="Hexo 是什么hexo是基于node.js的一个简洁的博客框架。hexo是一款使用markdown渲染，快速生成静态页面的框架。 为什么使用hexo作为博客 不走数据库，可以通过md作为存储文件 高效快速，生成和渲染静态页面快 部署发布简单，操作简便  hexo部署一. 安装node.js（网上很多，不详细解释）安装完毕后可以输入node -v查看是否安装成功. 二. 安装hexo1234567">
+<meta name="twitter:title" content="nginx原理分析">
+<meta name="twitter:description" content="本章主要记录一下我对nginx原理的理解，以及相关的重点与难点 nginx优点 IO多路复用（重点）前一章中提及到了nginx能支撑高并发的一个主要原因就是使用到io多路复用的这种技术。  什么是io多路复用？定义上：获取并监听多个fd(文件描述符)，通过单个线程内完成IO的读写,复用指的是线程例子:某快递公司快递员（处理线程），寄件（IO网络请求）   例子一：快递员不知道哪家需要寄件，逐间逐">
+<meta name="twitter:image" content="http://yoursite.com/2017/12/select.png">
 
 
 
@@ -120,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/02/22/hexo用法/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/12/05/nginx原理分析/"/>
 
 
 
 
 
-  <title>hexo的搭建与使用 | Jay-Luo</title>
+  <title>nginx原理分析 | Jay-Luo</title>
   
 
 
@@ -273,7 +275,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/22/hexo用法/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/05/nginx原理分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jay-Luo">
@@ -290,7 +292,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">hexo的搭建与使用</h1>
+          <h1 class="post-title" itemprop="name headline">nginx原理分析</h1>
         
 
         <div class="post-meta">
@@ -302,8 +304,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-22T12:00:00+08:00">
-                2017-02-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-05T12:00:00+08:00">
+                2017-12-05
               </time>
             
 
@@ -325,8 +327,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hexo总结/" itemprop="url" rel="index">
-                    <span itemprop="name">hexo总结</span>
+                  <a href="/categories/nginx总结/" itemprop="url" rel="index">
+                    <span itemprop="name">nginx总结</span>
                   </a>
                 </span>
 
@@ -362,16 +364,51 @@
       
 
       
-        <h3 id="Hexo-是什么"><a href="#Hexo-是什么" class="headerlink" title="Hexo 是什么"></a>Hexo 是什么</h3><pre><code>hexo是基于node.js的一个简洁的博客框架。hexo是一款使用markdown渲染，快速生成静态页面的框架。
-</code></pre><h3 id="为什么使用hexo作为博客"><a href="#为什么使用hexo作为博客" class="headerlink" title="为什么使用hexo作为博客"></a>为什么使用hexo作为博客</h3><ul>
-<li>不走数据库，可以通过md作为存储文件</li>
-<li>高效快速，生成和渲染静态页面快</li>
-<li>部署发布简单，操作简便</li>
+        <blockquote>
+<p>本章主要记录一下我对nginx原理的理解，以及相关的重点与难点</p>
+<h3 id="nginx优点"><a href="#nginx优点" class="headerlink" title="nginx优点"></a>nginx优点</h3></blockquote>
+<h4 id="IO多路复用（重点）"><a href="#IO多路复用（重点）" class="headerlink" title="IO多路复用（重点）"></a>IO多路复用（重点）</h4><p>前一章中提及到了nginx能支撑高并发的一个主要原因就是使用到io多路复用的这种技术。</p>
+<ol>
+<li>什么是io多路复用？<br>定义上：获取并监听多个fd(文件描述符)，通过单个线程内完成IO的读写,复用指的是线程<br>例子:某快递公司快递员（<font color="red">处理线程</font>），寄件（<font color="red">IO网络请求</font>）</li>
+</ol>
+<ul>
+<li>例子一：快递员不知道哪家需要寄件，逐间逐户询问是否需要寄件，这样的话就会造成耗费时间过长，万一某一户出现某些情况，寄件人还未回来，就会一直阻塞。这就是一个典型的单线程阻塞例子。</li>
+<li>例子二：快递公司觉得一个快递员收件太慢了，就聘请了多个快递员去收件。这样会造成一个问题就是收件速度确实比以前快，但这也会使快递公司成本变得高，造成不必要的人力浪费。这个就是多线程+阻塞的例子。</li>
+<li>例子三：寄件方准本好需要的寄件，然后打电话通知快递员某户寄件已准备好，快递员就上门收取。这样就能用一个快递员高效的收纳寄件。这就是一个io多路复用的例子，打电话通知寄件已准备好其实可以看作io事件准备就绪主动上报的一个过程，程序机制就会对已准备好的事件做一系列的io读写操作。</li>
 </ul>
-<h3 id="hexo部署"><a href="#hexo部署" class="headerlink" title="hexo部署"></a>hexo部署</h3><p>一. 安装node.js（网上很多，不详细解释）<br>安装完毕后可以输入node -v查看是否安装成功.</p>
-<p>二. 安装hexo<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#由于npm的源比较慢，建议先换成淘宝的镜像</span><br><span class="line">npm config set registry "https://registry.npm.taobao.org"</span><br><span class="line"></span><br><span class="line">#安装hexo客户端</span><br><span class="line">npm install hexo-cli g</span><br><span class="line"></span><br><span class="line">#安装服务端插件</span><br><span class="line">npm install hexo-server --save</span><br><span class="line"></span><br><span class="line">#安装hexo发布插件</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
-<h3 id="hexo相关语法"><a href="#hexo相关语法" class="headerlink" title="hexo相关语法"></a>hexo相关语法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.hexo init 文件夹 初始化文件夹为hexo目录形式</span><br><span class="line">2.hexo server(hexo s) 开启服务端,默认4000</span><br><span class="line">3.hexo s -p 5000 开启服务端并设置端口号</span><br><span class="line">4.hexo generate(hexo g) 生成静态页面</span><br><span class="line">5.hexo clean 清空静态页面</span><br><span class="line">6.hexo deploy 发布</span><br><span class="line">7.hexo g -d 生成并发布</span><br><span class="line">8.hexo g -s 生成并开启服务</span><br></pre></td></tr></table></figure>
-
+<ol>
+<li>io多路复用的优缺点?</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">优点</th>
+<th style="text-align:center">缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">单线程，消耗少</td>
+<td style="text-align:center">不适宜处理少量的请求数</td>
+</tr>
+<tr>
+<td style="text-align:center">能支撑大并发量的请求</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">非阻塞</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>nginx的io多路复用模型有哪些？<br>nginx中提供了多种io多路复用模型的机制如select,poll,epoll等。目前，linux2.6以上才能使用epoll机制。下面，我简单介绍一下select与epoll的区别。</li>
+</ol>
+<ul>
+<li>select<br><img src="../../select.png" alt="select"></li>
+</ul>
+<h4 id="cpu的亲和性"><a href="#cpu的亲和性" class="headerlink" title="cpu的亲和性"></a>cpu的亲和性</h4><p>能够将nginx上的worker绑定到某一特定的cpu上，这样大大避免了进程中缓存的丢失以及切换带来的资源消耗。而且，nginx中还会将某些字符串转换成特定的int，再进行比较，减少了指令条数（如nginx在解释请求头中的method信息时候,会将其值（post|get）转换成int类型进行比较）</p>
+<h4 id="轻量级"><a href="#轻量级" class="headerlink" title="轻量级"></a>轻量级</h4><p>nginx只保留核心功能模块，而且并不多，可进行相应扩展。<br>nginx模块化开发，比较易读</p>
+<h3 id="nginx-工作原理"><a href="#nginx-工作原理" class="headerlink" title="nginx 工作原理"></a>nginx 工作原理</h3>
       
     </div>
     
@@ -412,7 +449,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+            <a href="/tags/总结/" rel="tag"># 总结</a>
           
         </div>
       
@@ -425,8 +462,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/01/22/使用Sublime3/" rel="next" title="st3使用配置">
-                <i class="fa fa-chevron-left"></i> st3使用配置
+              <a href="/2017/11/30/nginx搭建与部署/" rel="next" title="nginx的搭建">
+                <i class="fa fa-chevron-left"></i> nginx的搭建
               </a>
             
           </div>
@@ -435,8 +472,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/02/23/git常用指令记录/" rel="prev" title="git指令用法">
-                git指令用法 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/25/书籍记录/" rel="prev" title="书籍记录">
+                书籍记录 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -583,7 +620,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo-是什么"><span class="nav-number">1.</span> <span class="nav-text">Hexo 是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么使用hexo作为博客"><span class="nav-number">2.</span> <span class="nav-text">为什么使用hexo作为博客</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo部署"><span class="nav-number">3.</span> <span class="nav-text">hexo部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo相关语法"><span class="nav-number">4.</span> <span class="nav-text">hexo相关语法</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx优点"><span class="nav-number">1.</span> <span class="nav-text">nginx优点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IO多路复用（重点）"><span class="nav-number">1.1.</span> <span class="nav-text">IO多路复用（重点）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cpu的亲和性"><span class="nav-number">1.2.</span> <span class="nav-text">cpu的亲和性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#轻量级"><span class="nav-number">1.3.</span> <span class="nav-text">轻量级</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx-工作原理"><span class="nav-number">2.</span> <span class="nav-text">nginx 工作原理</span></a></li></ol></div>
             
 
           </div>
