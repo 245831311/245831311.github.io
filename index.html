@@ -517,11 +517,11 @@
       
         
           
-            <blockquote>
+            <p><strong>导语:</strong></p>
+<blockquote>
 <p>本章主要记录一下我对nginx原理的理解，以及相关的重点与难点</p>
-<h3 id="nginx优点"><a href="#nginx优点" class="headerlink" title="nginx优点"></a>nginx优点</h3></blockquote>
-<p>####一, IO多路复用（重点）</p>
-<p><hr><br>前一章中提及到了nginx能支撑高并发的一个主要原因就是使用到io多路复用的这种技术。</p>
+</blockquote>
+<h3 id="一-nginx优点"><a href="#一-nginx优点" class="headerlink" title="一.nginx优点"></a>一.nginx优点</h3><h4 id="IO多路复用（重点）"><a href="#IO多路复用（重点）" class="headerlink" title="IO多路复用（重点）"></a>IO多路复用（重点）</h4><p>前一章中提及到了nginx能支撑高并发的一个主要原因就是使用到io多路复用的这种技术。</p>
 <ol>
 <li><p>什么是io多路复用？<br>定义上：获取并监听多个fd(文件描述符)，通过单个线程内完成IO的读写,复用指的是线程<br>例子:某快递公司快递员（<font color="red">处理线程</font>），寄件（<font color="red">IO网络请求</font>）</p>
 <ul>
@@ -579,7 +579,7 @@
 </table>
 <h4 id="cpu的亲和性"><a href="#cpu的亲和性" class="headerlink" title="cpu的亲和性"></a>cpu的亲和性</h4><p>能够将nginx上的worker绑定到某一特定的cpu上，这样大大避免了进程中缓存的丢失以及切换带来的资源消耗。而且，nginx中还会将某些字符串转换成特定的int，再进行比较，减少了指令条数（如nginx在解释请求头中的method信息时候,会将其值（post|get）转换成int类型进行比较）</p>
 <h4 id="轻量级"><a href="#轻量级" class="headerlink" title="轻量级"></a>轻量级</h4><p>nginx只保留核心功能模块，而且并不多，可进行相应扩展。<br>nginx模块化开发，比较易读</p>
-<h3 id="nginx-工作原理"><a href="#nginx-工作原理" class="headerlink" title="nginx 工作原理"></a>nginx 工作原理</h3><p><img src="/images/nginx/worker.jpg" alt="nginx工作图解"></p>
+<h3 id="二-nginx-工作原理"><a href="#二-nginx-工作原理" class="headerlink" title="二.nginx 工作原理"></a>二.nginx 工作原理</h3><p><img src="/images/nginx/worker.jpg" alt="nginx工作图解"></p>
 <ul>
 <li>master进程工作范围<ul>
 <li>master负责接收外界的信号并分发给worker各个进程。worker进程会通过抢排斥锁mutex来抢占资源（各个worker抢占资源是有一个算法，能均衡每个worker抢占到的资源）</li>
@@ -592,7 +592,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="nginx处理流程"><a href="#nginx处理流程" class="headerlink" title="nginx处理流程"></a>nginx处理流程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: Start</span><br><span class="line">op=&gt;operation: Your Operation</span><br><span class="line">cond=&gt;condition: Yes or No?</span><br><span class="line">e=&gt;end</span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;e</span><br><span class="line">cond(no)-&gt;op</span><br></pre></td></tr></table></figure>
+<h3 id="三-nginx处理流程"><a href="#三-nginx处理流程" class="headerlink" title="三.nginx处理流程"></a>三.nginx处理流程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">st=&gt;start: Start</span><br><span class="line">op=&gt;operation: Your Operation</span><br><span class="line">cond=&gt;condition: Yes or No?</span><br><span class="line">e=&gt;end</span><br><span class="line">st-&gt;op-&gt;cond</span><br><span class="line">cond(yes)-&gt;e</span><br><span class="line">cond(no)-&gt;op</span><br></pre></td></tr></table></figure>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
 <li><a href="https://www.cnblogs.com/zingp/p/6863170.html" target="_blank" rel="noopener">io模式与IO</a></li>
 <li><a href="https://www.jianshu.com/p/edb9ddd51c3d" target="_blank" rel="noopener">select模型的说明</a></li>
