@@ -84,3 +84,8 @@ deploy:
 #打赏功能  
 wechatpay: /wechatpay.png
 reward_comment: 坚持自我,相信努力会有收获
+
+flowchart:
+  # raphael:   # optional, the source url of raphael.js
+  # flowchart: # optional, the source url of flowchart.js
+  options: # options used for `drawSVG`

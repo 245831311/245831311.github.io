@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Jay-Luo">
 <meta property="og:description" content="nginx是什么nginx是一个开源且高性能、可靠的http中间件、代理服务 为什么使用nginx（详细在下一章总结） io多路复用(select,epoll等模型实现) cpu亲和性 轻量级  nginx的使用场景 （详细在另外一章总结） 代理服务 正向代理 反向代理   缓存服务 https服务 静态web服务 跨域 防盗链 客户端缓存   动静分离 nginx+lua  流量监控 waf 灰">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-26T03:55:51.845Z">
+<meta property="og:updated_time" content="2018-06-27T08:37:40.818Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="nginx的搭建">
 <meta name="twitter:description" content="nginx是什么nginx是一个开源且高性能、可靠的http中间件、代理服务 为什么使用nginx（详细在下一章总结） io多路复用(select,epoll等模型实现) cpu亲和性 轻量级  nginx的使用场景 （详细在另外一章总结） 代理服务 正向代理 反向代理   缓存服务 https服务 静态web服务 跨域 防盗链 客户端缓存   动静分离 nginx+lua  流量监控 waf 灰">
@@ -409,7 +409,7 @@
 <li>进入解压目录，并执行./configure –prefix=/usr/local/nginx  </li>
 <li>make &amp;&amp; make install</li>
 </ol>
-<h3 id="nginx的目录配置说明"><a href="#nginx的目录配置说明" class="headerlink" title="nginx的目录配置说明"></a>nginx的目录配置说明</h3><p>├── auto            自动检测系统环境以及编译相关的脚本<br><br>│   ├── cc          关于编译器相关的编译选项的检测脚本<br><br>│   ├── lib         nginx编译所需要的一些库的检测脚本<br><br>│   ├── os          与平台相关的一些系统参数与系统调用相关的检测<br><br>│   └── types       与数据类型相关的一些辅助脚本<br><br>├── conf            存放默认配置文件，在make install后，会拷贝到安装目录中去<br><br>├── contrib         存放一些实用工具，如geo配置生成工具（geo2nginx.pl）<br><br>├── html            存放默认的网页文件，在make install后，会拷贝到安装目录中去<br><br>├── man             nginx的man手册<br><br>└── src             存放nginx的源代码<br><br>    ├── core        nginx的核心源代码，包括常用数据结构的定义，以及nginx初始化运行的核心代码如main函数<br><br>    ├── event       对系统事件处理机制的封装，以及定时器的实现相关代码<br><br>    │   └── modules 不同事件处理方式的模块化，如select、poll、epoll、kqueue等<br><br>    ├── http        nginx作为http服务器相关的代码<br><br>    │   └── modules 包含http的各种功能模块<br><br>    ├── mail        nginx作为邮件代理服务器相关的代码<br><br>    ├── misc        一些辅助代码，测试c++头的兼容性，以及对google_perftools的支持<br><br>    └── os          主要是对各种不同体系统结构所提供的系统函数的封装，对外提供统一的系统调用接口<br></p>
+<h3 id="nginx的目录配置说明"><a href="#nginx的目录配置说明" class="headerlink" title="nginx的目录配置说明"></a>nginx的目录配置说明</h3><p>├── auto            自动检测系统环境以及编译相关的脚本<br>│   ├── cc          关于编译器相关的编译选项的检测脚本<br>│   ├── lib         nginx编译所需要的一些库的检测脚本<br>│   ├── os          与平台相关的一些系统参数与系统调用相关的检测<br>│   └── types       与数据类型相关的一些辅助脚本<br>├── conf            存放默认配置文件，在make install后，会拷贝到安装目录中去<br>├── contrib         存放一些实用工具，如geo配置生成工具（geo2nginx.pl）<br>├── html            存放默认的网页文件，在make install后，会拷贝到安装目录中去<br>├── man             nginx的man手册<br>└── src             存放nginx的源代码<br>    ├── core        nginx的核心源代码，包括常用数据结构的定义，以及nginx初始化运行的核心代码如main函数<br>    ├── event       对系统事件处理机制的封装，以及定时器的实现相关代码<br>    │   └── modules 不同事件处理方式的模块化，如select、poll、epoll、kqueue<br>    ├── http        nginx作为http服务器相关的代码<br>    │   └── modules 包含http的各种功能模块<br>    ├── mail        nginx作为邮件代理服务器相关的代码<br>    ├── misc        一些辅助代码，测试c++头的兼容性，以及对google_perftools的支持<br>    └── os          主要是对各种不同体系统结构所提供的系统函数的封装，对外提供统一的系统调用接口</p>
 <h3 id="nginx相关命令"><a href="#nginx相关命令" class="headerlink" title="nginx相关命令"></a>nginx相关命令</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./nginx 启动</span><br><span class="line">./nginx -s stop 关闭</span><br><span class="line">./nginx -s reload 重启</span><br><span class="line">./nginx -tc nginx 配置文件   检测nginx配置文件语法</span><br></pre></td></tr></table></figure>
 <h3 id="注意"><a href="#注意" class="headerlink" title=" 注意 "></a><strong><font color="red"> 注意 </font></strong></h3><ul>
 <li>在重新编译nginx时候，先将原有的nginx二进制文件备份,再执行./configure &amp;&amp; make &amp;&amp; make install 以免被新的nginx覆盖</li>
@@ -487,8 +487,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/25/书籍记录/" rel="prev" title="书籍记录">
-                书籍记录 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/12/05/nginx原理分析/" rel="prev" title="nginx原理分析">
+                nginx原理分析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -570,7 +570,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
