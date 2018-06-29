@@ -790,3 +790,8 @@ images: images
 # Theme version
 version: 5.1.3
 
+flowchart:
+  #raphael:	https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js
+  #flowchart: https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js
+  options: # options used for `drawSVG`
+

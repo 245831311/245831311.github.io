@@ -61,25 +61,40 @@ nginx模块化开发，比较易读
 ### 二.nginx 工作原理
 ![nginx工作图解](/images/nginx/worker.jpg)
 - master进程工作范围
-    -  master负责接收外界的信号并分发给worker各个进程。worker进程会通过抢排斥锁mutex来抢占资源（各个worker抢占资源是有一个算法，能均衡每个worker抢占到的资源）
+    -  master负责接收外界的信号并分发给worker各个进程。worker进程会通过抢排斥锁accept_mutex来抢占资源（各个worker抢占资源是有一个算法，能均衡每个worker抢占到的资源）
     -  master管理和监控着各个worker的运行状态。
     -  master加载配置文件(如执行重启，关闭操作)。如重启操作，首先重新加载配置文件，fork出新的worker并通知旧的worker停止接收资源，等到旧worker已经完成了剩下的请求后就退出。
 - worker进程工作范围
     -  每个抢到互斥锁的worker进程会进行读取请求、解释请求、处理请求、产生数据、返回客户端的步骤。
 
-### 三.nginx处理流程
+### 三.nginx中对connection流程
+<center>
 
 ```flow
-st=>start: Start
-op=>operation: Your Operation
-cond=>condition: Yes or No?
-e=>end
-st->op->cond
-cond(yes)->e
-cond(no)->op
-```
+st=>start: 开始
+step1=>operation: 客户端与nginx通过三次握手tcp连接,并创建好socket
+step2=>operation: worker抢占锁并将connection封装到ngx_connection_t实体中
+step3=>operation: 将socket设置好读写事件
+step4=>operation: 与其他server创建连接与创建
+ngx_connection_t实体并设置好读写事件
 
-### 参考
+step5=>operation: 执行读写事件，完成后nginx与客户端交换数据
+step6=>operation: 释放ngx_connection_t,nginx或客户端主动关掉连接
+cond=>condition: 是否有其他server(如upstream等)
+e=>end: 结束
+st->step1
+step1->step2
+step2->step3->cond
+cond(yes)->step4
+cond(no)->step5
+step4->step5->step6->e
+```
+</center>
+
+### 四.总结
+以上是经过我这一段时间对nginx的了解作出的总结，可能会有一些偏差或者不够完善的地方。在今后会不停地去反复完善，希望能将nginx理解得更为透彻。
+
+### 五.参考
 1.  [io模式与IO](https://www.cnblogs.com/zingp/p/6863170.html)
 2.  [select模型的说明](https://www.jianshu.com/p/edb9ddd51c3d)
 3.  [nginx从入门到精通](http://tengine.taobao.org/book/)

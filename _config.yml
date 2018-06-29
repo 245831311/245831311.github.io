@@ -86,6 +86,6 @@ wechatpay: /wechatpay.png
 reward_comment: 坚持自我,相信努力会有收获
 
 flowchart:
-  # raphael:   # optional, the source url of raphael.js
-  # flowchart: # optional, the source url of flowchart.js
+  #raphael:  https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js
+  #flowchart: https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js
   options: # options used for `drawSVG`
