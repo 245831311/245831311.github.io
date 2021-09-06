@@ -82,8 +82,8 @@ deploy:
   branch: master
 
 #打赏功能  
-wechatpay: /wechatpay.png
-reward_comment: 坚持自我,相信努力会有收获
+#wechatpay: /wechatpay.png
+#reward_comment: 坚持自我,相信努力会有收获
 
 flowchart:
   #raphael:  https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js
