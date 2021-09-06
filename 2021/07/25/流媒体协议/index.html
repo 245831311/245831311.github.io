@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="视频," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="目的总结我在流媒体项目中接触到且使用过的所有协议 总体 TCP/UDP学习流媒体的协议，首当其冲就是学习TCP与UDP的协议，因为基本的协议都是基于这两种协议来传输 RTP与RTCP定义RTP实时流传输协议，是用于Internet上针对多媒体数据流的一种传输协议。RTP位于传输层，基于UDP之上。RTP为Internet上端到端的实时传输提供时间信息和流同步，但并不保证服务质量，服务质量由RTCP">
+<meta name="keywords" content="视频">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流媒体协议">
+<meta property="og:url" content="http://yoursite.com/2021/07/25/流媒体协议/index.html">
+<meta property="og:site_name" content="Jay-Luo">
+<meta property="og:description" content="目的总结我在流媒体项目中接触到且使用过的所有协议 总体 TCP/UDP学习流媒体的协议，首当其冲就是学习TCP与UDP的协议，因为基本的协议都是基于这两种协议来传输 RTP与RTCP定义RTP实时流传输协议，是用于Internet上针对多媒体数据流的一种传输协议。RTP位于传输层，基于UDP之上。RTP为Internet上端到端的实时传输提供时间信息和流同步，但并不保证服务质量，服务质量由RTCP">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/video/agreement.png">
+<meta property="og:image" content="http://yoursite.com/images/video/RTCP协议.png">
+<meta property="og:image" content="http://yoursite.com/images/video/RTP协议.jpg">
+<meta property="og:image" content="http://yoursite.com/images/video/RTSP协议.png">
+<meta property="og:image" content="http://yoursite.com/images/video/wps2.png">
+<meta property="og:image" content="http://yoursite.com/images/video/hls-message.png">
+<meta property="og:image" content="http://yoursite.com/images/video/hls.png">
+<meta property="og:image" content="http://yoursite.com/images/video/协议性能对比.png">
+<meta property="og:image" content="http://yoursite.com/images/video/zlm.png">
+<meta property="og:updated_time" content="2021-09-06T16:09:04.326Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="流媒体协议">
+<meta name="twitter:description" content="目的总结我在流媒体项目中接触到且使用过的所有协议 总体 TCP/UDP学习流媒体的协议，首当其冲就是学习TCP与UDP的协议，因为基本的协议都是基于这两种协议来传输 RTP与RTCP定义RTP实时流传输协议，是用于Internet上针对多媒体数据流的一种传输协议。RTP位于传输层，基于UDP之上。RTP为Internet上端到端的实时传输提供时间信息和流同步，但并不保证服务质量，服务质量由RTCP">
+<meta name="twitter:image" content="http://yoursite.com/images/video/agreement.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/07/25/流媒体协议/"/>
+
+
+
+
+
+  <title>流媒体协议 | Jay-Luo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bc6214a71594310d314698ac546aca76";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jay-Luo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小小的天，大大的梦</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/25/流媒体协议/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">流媒体协议</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-25T11:16:39+08:00">
+                2021-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/视频/" itemprop="url" rel="index">
+                    <span itemprop="name">视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h1><p>总结我在流媒体项目中接触到且使用过的所有协议</p>
+<h1 id="总体"><a href="#总体" class="headerlink" title="总体"></a>总体</h1><p><img src="/images/video/agreement.png" alt="image"></p>
+<h2 id="TCP-UDP"><a href="#TCP-UDP" class="headerlink" title="TCP/UDP"></a>TCP/UDP</h2><p>学习流媒体的协议，首当其冲就是学习TCP与UDP的协议，因为基本的协议都是基于这两种协议来传输</p>
+<h2 id="RTP与RTCP"><a href="#RTP与RTCP" class="headerlink" title="RTP与RTCP"></a>RTP与RTCP</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>RTP实时流传输协议，是用于Internet上针对多媒体数据流的一种传输协议。RTP位于传输层，基于UDP之上。RTP为Internet上端到端的实时传输提供时间信息和流同步，但并不保证服务质量，服务质量由RTCP来提供。</p>
+<p>RTCP是实时传输控制协议，RTCP收集相关媒体连接的统计信息，例如：传输字节数，传输分组数，丢失分组数，jitter，单向和双向网络延迟等，服务器可以利用这些信息动态的改变传输速率，甚至改变净荷的类型。RTCP消息也被封装为UDP数据报进行传输</p>
+<p>一般而言,目的传输地址由一个网络地址和一对端口组成，有两个端口：一个给RTP包，一个 给RTCP包，使得RTP/RTCP数据能够正确发送。RTP数据发向偶数的UDP端口，而对应的控制信号RTCP数据发向相邻的奇数UDP端口（偶数的 UDP端口＋1），这样就构成一个UDP端口对。 RTP的发送过程如下，接收过程则相反。</p>
+<h3 id="协议介绍"><a href="#协议介绍" class="headerlink" title="协议介绍"></a>协议介绍</h3><h4 id="RTP协议结构"><a href="#RTP协议结构" class="headerlink" title="RTP协议结构"></a>RTP协议结构</h4><p><img src="/images/video/RTCP协议.png" alt="RTP协议结构"></p>
+<p>RTP分组头部的各字段含义为：</p>
+<p>V：RTP版本号。为“10”。</p>
+<p>P：填充指示位。P为“1”时表示分组结尾含有1个或多个填充字节，其中这部分不属于有效载荷。</p>
+<p>X：扩展指示位。X为“1”时，则表示固定头部后还有一个扩展头部，这种情况较复杂，很少使用。</p>
+<p>CC：CSRC计数。指示固定头部后的CSRC的个数</p>
+<p>M：标志。</p>
+<p>PT：负载类型。表示RTP分组的负载类型。我们常用的有</p>
+<table>
+<thead>
+<tr>
+<th>Payload Type</th>
+<th>Codec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>PCM μ -Law</td>
+</tr>
+<tr>
+<td>8</td>
+<td>PCM-A Law</td>
+</tr>
+<tr>
+<td>9</td>
+<td>G..722 audio codec</td>
+</tr>
+<tr>
+<td>4</td>
+<td>G..723 audio codec</td>
+</tr>
+<tr>
+<td>15</td>
+<td>G..728 audio codec</td>
+</tr>
+<tr>
+<td>18</td>
+<td>G..729 audio codec</td>
+</tr>
+<tr>
+<td>34</td>
+<td>G..763 audio codec</td>
+</tr>
+<tr>
+<td>31</td>
+<td>G..761 audio codec</td>
+</tr>
+</tbody>
+</table>
+<p>序列号：序号顾名思义就是表示RTP分组的次序。初值为随机数，每发送一个增加1。可供接收方检测分组丢失和恢复分组次序。</p>
+<p>时间戳：表示RTP分组第一个字节的取样时刻。其初值为随机数，每个采用周期加1。如果每次传送20ms的数据，由于音频的采样频率为8000Hz，即每20ms有160次采样，则每传送20ms的数据，时戳增加160。</p>
+<p>SSRC：同步源标识(Synchronous Source)。表示信号的同步源，其值应随机选择，以保证同一个RTP会话中任意两个同步源的SSRC标识不同。</p>
+<p>CSRC：分信源(贡献源)标识(Contributing Source)。识别该数据包中的有效载荷的贡献源。换句话说，CSRC标识由混合器插入，其值就是组成复合信号的各个分信号的SSRC标识，用以标识各个组成分信号的信源。RTP分组的头部最多可以包含15个CSRC标识，其数目由CC字段指明。</p>
+<h4 id="RTCP协议结构"><a href="#RTCP协议结构" class="headerlink" title="RTCP协议结构"></a>RTCP协议结构</h4><p><img src="/images/video/RTP协议.jpg" alt="RTCP"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">版本（V）：同RTP包头域。</span><br><span class="line"></span><br><span class="line">填充（P）：同RTP包头域。</span><br><span class="line"></span><br><span class="line">接收报告计数器（RC）：5比特，该SR包中的接收报告块的数目，可以为零。</span><br><span class="line"></span><br><span class="line">包类型（PT）：8比特，SR包是200。</span><br><span class="line"></span><br><span class="line">长度域（Length）：16比特，其中存放的是该SR包以32比特为单位的总长度减一。</span><br><span class="line"></span><br><span class="line">同步源（SSRC of sender）：SR包发送者的同步源标识符。与对应RTP包中的SSRC一样。</span><br><span class="line"></span><br><span class="line">NTP Timestamp（Network time protocol）SR包发送时的绝对时间值。NTP的作用是同步不同的RTP媒体流。</span><br><span class="line"></span><br><span class="line">RTP Timestamp：与NTP时间戳对应，与RTP数据包中的RTP时间戳具有相同的单位和随机初始值。</span><br><span class="line"></span><br><span class="line">Sender’s packet count：从开始发送包到产生这个SR包这段时间里，发送者发送的RTP数据包的总数. SSRC改变时，这个域清零。</span><br><span class="line"></span><br><span class="line">Sender`s octet count：从开始发送包到产生这个SR包这段时间里，发送者发送的净荷数据的总字节数（不包括头部和填充）。发送者改变其SSRC时，这个域要清零。</span><br><span class="line"></span><br><span class="line">同步源n的SSRC标识符：该报告块中包含的是从该源接收到的包的统计信息。</span><br><span class="line"></span><br><span class="line">丢失率（Fraction Lost）：表明从上一个SR或RR包发出以来从同步源n(SSRC_n)来的RTP数据包的丢失率。</span><br><span class="line"></span><br><span class="line">累计的包丢失数目：从开始接收到SSRC_n的包到发送SR,从SSRC_n传过来的RTP数据包的丢失总数。</span><br><span class="line"></span><br><span class="line">收到的扩展最大序列号：从SSRC_n收到的RTP数据包中最大的序列号，</span><br><span class="line"></span><br><span class="line">接收抖动（Interarrival jitter）：RTP数据包接受时间的统计方差估计</span><br><span class="line"></span><br><span class="line">上次SR时间戳（Last SR,LSR）：取最近从SSRC_n收到的SR包中的NTP时间戳的中间32比特。如果目前还没收到SR包，则该域清零。</span><br><span class="line"></span><br><span class="line">上次SR以来的延时（Delay since last SR,DLSR）：上次从SSRC_n收到SR包到发送本报告的延时。</span><br></pre></td></tr></table></figure>
+<p>根据所携带的控制信息不同RTCP信息包可分为RR（接收者报告包）、SR（源报告包）、SEDS（源描述包）、BYE（离开申明）和APP（特殊应用包）五类5类：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>缩写表示</th>
+<th>用途</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>SR（Sender Report）</td>
+<td>发送端报告</td>
+<td>发送端报告包，用于发送和接收活动源的统计信息；</td>
+</tr>
+<tr>
+<td>201</td>
+<td>RR（Receiver Report）</td>
+<td>接收端报告</td>
+<td>接收者报告包，用于接收非活动站的统计信息；</td>
+</tr>
+<tr>
+<td>202</td>
+<td>SDES（Source Description Items）</td>
+<td>源点描述</td>
+<td>源描述包，用于报告和站点相关的信息，包括CNAME；</td>
+</tr>
+<tr>
+<td>203</td>
+<td>BYE</td>
+<td>结束传输</td>
+<td>断开RTCP包，是站点离开系统的报告，表示结束；</td>
+</tr>
+<tr>
+<td>204</td>
+<td>APP</td>
+<td>特定应用</td>
+<td>应用特定函数。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="RTSP"><a href="#RTSP" class="headerlink" title="RTSP"></a>RTSP</h2><p><img src="/images/video/RTSP协议.png" alt="image"></p>
+<h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>实时串流协议（应用层）,TCP/IP协议体系中的一个应用层协议，RTSP位于RTP和RTCP之上，可以基于TCP或者UDP来完成数据传输。RTSP实时性比较，扩展性比较好（UDP,TCP传输数据）。rtsp流主要是控制流媒体的行为动作，提供了诸如暂停，快进等控制，而它本身并不传输流媒体数。</p>
+<h3 id="协议介绍-1"><a href="#协议介绍-1" class="headerlink" title="协议介绍"></a>协议介绍</h3><ol>
+<li>RTSP结构</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rtsp://admin:a12345678@47.106.89.193:10000/h264/ch33/main/av_stream</span><br></pre></td></tr></table></figure>
+<p>结构：<br>rtsp://user:pwd@host:port/abs_path/content_name</p>
+<p>user:摄像头设备的登陆用户名</p>
+<p>pwd:摄像头设备的登陆密码</p>
+<p>host:摄像头有效的域名或是IP地址</p>
+<p>port:端口号，对于RTSP协议来说，缺省的端口号为554</p>
+<p>abs_path:媒体流资源标识</p>
+<ol>
+<li>方法定义</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th>方向</th>
+<th>对象</th>
+<th>要求</th>
+<th>含义 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">DESCRIBE</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>推荐</td>
+<td>检查演示或媒体对象的描述，也允许使用接收头指定用户理解的描述格式。DESCRIBE的答复-响应组成媒体RTSP初始阶段</td>
+</tr>
+<tr>
+<td style="text-align:center">ANNOUNCE</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>当从用户发往服务器时，ANNOUNCE将请求URL识别的演示或媒体对象描述发送给服务器；反之，ANNOUNCE实时更新连接描述。如新媒体流加入演示，整个演示描述再次发送，而不仅仅是附加组件，使组件能被删除</td>
+</tr>
+<tr>
+<td style="text-align:center">GET_PARAMETER</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>GET_PARAMETER请求检查URL指定的演示与媒体的参数值。没有实体体时，GET_PARAMETER也许能用来测试用户与服务器的连通情况</td>
+</tr>
+<tr>
+<td style="text-align:center">OPTIONS</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>要求</td>
+<td>可在任意时刻发出OPTIONS请求，如用户打算尝试非标准请求，并不影响服务器状态</td>
+</tr>
+<tr>
+<td style="text-align:center">PAUSE</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>推荐</td>
+<td>PAUSE请求引起流发送临时中断。如请求URL命名一个流，仅回放和记录被停止；如请求URL命名一个演示或流组，演示或组中所有当前活动的流发送都停止。恢复回放或记录后，必须维持同步。在SETUP消息中连接头超时参数所指定时段期间被暂停后，尽管服务器可能关闭连接并释放资源，但服务器资源会被预订</td>
+</tr>
+<tr>
+<td style="text-align:center">PLAY</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>要求</td>
+<td>PLAY告诉服务器以SETUP指定的机制开始发送数据；直到一些SETUP请求被成功响应，客户端才可发布PLAY请求。PLAY请求将正常播放时间设置在所指定范围的起始处，发送流数据直到范围的结束处。PLAY请求可排成队列，服务器将PLAY请求排成队列，顺序执行</td>
+</tr>
+<tr>
+<td style="text-align:center">RECORD</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>可选</td>
+<td>该方法根据演示描述初始化媒体数据记录范围，时标反映开始和结束时间；如没有给出时间范围，使用演示描述提供的开始和结束时间。如连接已经启动，立即开始记录，服务器数据请求URL或其他URL决定是否存储记录的数据；如服务器没有使用URL请求，响应应为201（创建），并包含描述请求状态和参考新资源的实体与位置头。支持现场演示记录的媒体服务器必须支持时钟范围格式，smpte格式没有意义</td>
+</tr>
+<tr>
+<td style="text-align:center">REDIRECT</td>
+<td>S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>重定向请求通知客户端连接到另一服务器地址。它包含强制头地址，指示客户端发布URL请求；也可能包括参数范围，以指明重定向何时生效。若客户端要继续发送或接收URL媒体，客户端必须对当前连接发送TEARDOWN请求，而对指定主执新连接发送SETUP请求</td>
+</tr>
+<tr>
+<td style="text-align:center">SETUP</td>
+<td>C-&gt;S</td>
+<td>S</td>
+<td>要求</td>
+<td>对URL的SETUP请求指定用于流媒体的传输机制。客户端对正播放的流发布一个SETUP请求，以改变服务器允许的传输参数。如不允许这样做，响应错误为”455 Method Not Valid In This State”。为了透过防火墙，客户端必须指明传输参数，即使对这些参数没有影响</td>
+</tr>
+<tr>
+<td style="text-align:center">SET_PARAMETER</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>这个方法请求设置演示或URL指定流的参数值。请求仅应包含单个参数，允许客户端决定某个特殊请求为何失败。如请求包含多个参数，所有参数可成功设置，服务器必须只对该请求起作用。服务器必须允许参数可重复设置成同一值，但不让改变参数值。注意：媒体流传输参数必须用SETUP命令设置。将设置传输参数限制为SETUP有利于防火墙。将参数划分成规则排列形式，结果有更多有意义的错误指示</td>
+</tr>
+<tr>
+<td style="text-align:center">TEARDOWN</td>
+<td>C-&gt;S</td>
+<td>S</td>
+<td>要求</td>
+<td>TEARDOWN请求停止给定URL流发送，释放相关资源。如URL是此演示URL，任何RTSP连接标识不再有效。除非全部传输参数是连接描述定义的，SETUP请求必须在连接可再次播放前发布</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><p>交互流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">C表示RTSP客户端,S表示RTSP服务端</span><br><span class="line"></span><br><span class="line">1. 第一步：查询服务器端可用方法</span><br><span class="line">1.C-&gt;S:OPTION request //询问S有哪些方法可用</span><br><span class="line"></span><br><span class="line">1.S-&gt;C:OPTION response //S回应信息的public头字段中包括提供的所有可用方法</span><br><span class="line"></span><br><span class="line">2. 第二步：得到媒体描述信息</span><br><span class="line">2.C-&gt;S:DESCRIBE request //要求得到S提供的媒体描述信息</span><br><span class="line"></span><br><span class="line">2.S-&gt;C:DESCRIBE response //S回应媒体描述信息，一般是sdp信息</span><br><span class="line"></span><br><span class="line">3. 第三步：建立RTSP会话</span><br><span class="line">3.C-&gt;S:SETUP request //通过Transport头字段列出可接受的传输选项，请求S建立会话</span><br><span class="line"></span><br><span class="line">3.S-&gt;C:SETUP response //S建立会话，通过Transport头字段返回选择的具体转输选项，并返回建立的Session ID;</span><br><span class="line"></span><br><span class="line">4. 第四步：请求开始传送数据</span><br><span class="line">4.C-&gt;S:PLAY request //C请求S开始发送数据</span><br><span class="line"></span><br><span class="line">4.S-&gt;C:PLAY response //S回应该请求的信息</span><br><span class="line"></span><br><span class="line">5. 第五步： 数据传送播放中</span><br><span class="line">S-&gt;C:发送流媒体数据 // 通过RTP协议传送数据</span><br><span class="line"></span><br><span class="line">6. 第六步：关闭会话，退出</span><br><span class="line">6.C-&gt;S:TEARDOWN request //C请求关闭会话</span><br><span class="line"></span><br><span class="line">6.S-&gt;C:TEARDOWN response //S回应该请求</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>RTSP与HTTP区别</p>
+</li>
+</ol>
+<ul>
+<li>RTSP中客户端和服务器都可以发出请求,HTTP只能客户端发起请求；</li>
+<li>RTSP相比HTTP提供多种方法定义</li>
+<li>RTSP传输一般需要2-3个通道，命令和数据通道分离，HTTP和RTMP一般在TCP一个通道上传输命令和数据</li>
+</ul>
+<h2 id="SDP-SIP"><a href="#SDP-SIP" class="headerlink" title="SDP/SIP"></a>SDP/SIP</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><p>SIP与SDP这两个协议会在国标视频上会出现比较多。其中一般会与RTSP等协议共同</p>
+<p>SIP它是一个基于文本的应用层控制协议，独立于底层传输协议，用于建立、修改和终止IP网络上的双方或多方多媒体会话</p>
+<p>SDP（Session Description Protocol）是一个用来描述多媒体会话的应用层控制协议，它是一个基于文本的协议，用于会话建立过程中的媒体类型和编码方案的协商等</p>
+<h3 id="协议介绍-2"><a href="#协议介绍-2" class="headerlink" title="协议介绍"></a>协议介绍</h3><h4 id="SIP介绍"><a href="#SIP介绍" class="headerlink" title="SIP介绍"></a>SIP介绍</h4><ol>
+<li>SIP 角色</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用户代理（UA）</td>
+<td>用户代理客户端（UAC）和用户代理服务器（UAS）组成，UAC负责发起呼叫，UAS负责接收呼叫并作出响应</td>
+</tr>
+<tr>
+<td>代理服务器（PS）</td>
+<td>通过它把来自用户代理客户端（UAC）的请求转发到用户代理服务端（UAS），并把UAS的响应消息转发回UAC</td>
+</tr>
+<tr>
+<td>注册服务器（register server）</td>
+<td>是具有接收注册请求、将请求中携带的信息进行保存并提供本域内位置服务的功能服务器</td>
+</tr>
+<tr>
+<td>重定向服务器（redirect server）</td>
+<td>负责规划SIP呼叫路由。它将获得的呼叫下一跳地址信息告诉呼叫方，以使呼叫方根据此地址直接向下一跳发出请求，此后重定向服务器退出呼叫过程。</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><p>SIP请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">是客户端发给服务器激活一个SIP操作的消息，由一个方法名（Method）、一个请求URI（Request-URI）和一个协议版本 （SIP-Version）组成，三个部分之间以空格（SP）间隔。</span><br><span class="line"></span><br><span class="line">Request-Line  =  Method + SP + Request-URI + SP + SIP-Version + CRLF</span><br><span class="line"></span><br><span class="line">RFC中定义了6中请求：</span><br><span class="line"></span><br><span class="line">INVITE：表明接收用户或服务被邀请加入一个会话；也可以使用这种方式来修改先前建立会话的特性；成功响应（200 OK）表明被叫方愿意参与会话；</span><br><span class="line"></span><br><span class="line">ACK：确认UAC已经接收到了INVITE请求的最终响应（只与INVITE请求一起使用）；用于结束一个200 OK响应；若INVITE请求中不含有会话描述信息，ACK可以包含一个最终会话描述的消息体；</span><br><span class="line"></span><br><span class="line">OPTION：UA用此向UAS查询它的功能；</span><br><span class="line"></span><br><span class="line">BYE：用于终结一个先前建立的会话；</span><br><span class="line"></span><br><span class="line">CANCEL：使UAC和网络服务器取消一个正在进行的请求（如INVITE）；</span><br><span class="line"></span><br><span class="line">REGISTER：客户端注册其目前的位置信息；</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>SIP响应</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">服务器向客户端发送SIP响应，指明客户端先前发送给服务器的SIP请求的状态；由一个协议版本（SIP-Version），一个状态码（Status-Code）和一个原因说明（Reason-Phrase）组成，类似于请求消息，三个部分之间也以空格字符（SP）间隔。</span><br><span class="line"></span><br><span class="line">Status-Line := SIP-Version + SP + Status-Code + SP + Reason-Phrase + CRLF</span><br><span class="line"></span><br><span class="line">状态码是一个100～699之间的3位正整数（具体参见后面附录），它表示对于一个请求消息的响应结果；原因说明是一串可以显示的字符，用于对响应的状态码进行简短说明。</span><br><span class="line"></span><br><span class="line">1xx：临时响应 （Provisional）；之前的请求消息已经收到，并准备接着处理后面的请求消息。</span><br><span class="line"></span><br><span class="line">2xx：成功响应 （Success）； 操作成功，请求消息已被收到并且成功地处理。</span><br><span class="line"></span><br><span class="line">3xx：重定向响应 （Redirection）； 服务器向客户端返回其它可能的位置，客户端应当根据响应中包含的地址信息向另一个服务器重发请求消息。</span><br><span class="line"></span><br><span class="line">4xx： 客户端错误 （Client Error）； 请求由于客户端的错误而失败，客户端可以根据响应状态码修改并重发刚才的请求消息。</span><br><span class="line"></span><br><span class="line">5xx：服务器错误 （Server Error） ；请求由于服务器的错误而失败，客户端可以向另一个服务器重发请求消息。</span><br><span class="line"></span><br><span class="line">6xx：全局错误（Global Failure）； 请求失败，客户端不应该再向任何服务器重发该请求消息。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>标题头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">遵从HTTP标题头（RFC2616）定义的同样格式：每个标题头由字段名，紧跟着冒号(:)和字段组成。</span><br><span class="line"></span><br><span class="line">主要标题头（详情参见</span><br><span class="line"></span><br><span class="line">SIP常见头域（header）说明</span><br><span class="line"></span><br><span class="line">From：定义请求发起者（通常是发送者AOR），包含SIP或SIP URI和一个可选的显示名字；</span><br><span class="line"></span><br><span class="line">To：定义了请求的接收者（通常是接收者AOR），包含SIP或SIP URI和一个可选的显示名字；因重定向和转移，SIP请求不一定发送给‘希望的’接收者；</span><br><span class="line"></span><br><span class="line">Call-ID：定义了一系列的SIP消息，对所有由对话中的UA发送的所有SIP请求和响应，Call-ID必须唯一；</span><br><span class="line"></span><br><span class="line">Cseq：由一个整数值和一个方式名称组成，在一个对话中标识和序列SIP请求，也区分重传和新消息；</span><br><span class="line"></span><br><span class="line">Via：定义请求路径和响应要发送的地址；</span><br><span class="line"></span><br><span class="line">Contact：定义US希望接收新SIP请求的SIP或SIPS URI（实际地址）；</span><br><span class="line"></span><br><span class="line">Allow：列出产生SIP消息的UA所支持的功能集合；</span><br><span class="line"></span><br><span class="line">Supported：列出所有UA支持的SIP扩展（RFC3262）；</span><br><span class="line"></span><br><span class="line">Require：包含远端UA必须支持的SIP扩展；</span><br><span class="line"></span><br><span class="line">Content-Type：请求或响应的消息体类型；</span><br><span class="line"></span><br><span class="line">Content-Length：请求或响应的消息体的大小（十进制）；</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="SDP协议"><a href="#SDP协议" class="headerlink" title="SDP协议"></a>SDP协议</h4><p>SDP协议内容(具体可参考国标规范文档)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 v=:Version ，表示协议的版本号</span><br><span class="line">2 o=: Origin,表示源。值域中各项的含义依次是username(用户名)，sess-id(会话ID)，sess-version(会话版本号)，nettype(网络类型)，addrtype(地址类型)，unucast-address(单播地址)。</span><br><span class="line">3 s=:Session Name,表示本sdp所描述的session的名称</span><br><span class="line">4 c=:Connection Data 链接数据。其中值域中以空格分配的两个字段分贝是网络类型和网络地址，以后的RTP流就会发到该地址上。</span><br><span class="line">5 b=:Badwidth type，带宽类型</span><br><span class="line">6 t=:Timing ,起止时间，0表示无限</span><br><span class="line">7 m=:audio Media Type,媒体类型。audio表示音频，50452表示音频端口号，RTP/AVR是传输协议；后面是支持的Codec类型，与RTP流中的PayloadType(载荷类型)相对应，在这里分别是8,0,98和101,8和0分别代表PCMA和PCMU，他们属于静态编码，大于95的编码都属于动态编码，需要在后面使用“a=rtpmap”进行说明。</span><br><span class="line">8 a=: Attributes,属性。 它用于描述上面的音频的属性。如本例中98代表8000hz的ILBC编码，101代表RFC2833dtmf事件。a=sendrecv表示该媒体流可用于收和发，其他的还有sendonly(仅收)，recvonly(仅发)和inactive(不收不发)</span><br><span class="line">9 v=:Video，视频。</span><br></pre></td></tr></table></figure></p>
+<h4 id="点播流程"><a href="#点播流程" class="headerlink" title="点播流程"></a>点播流程</h4><p>为了更加熟悉SIP的流程，截取点播流程的流程图。可以看出，SIP传输过程当中都会有SDP的使用。</p>
+<p><img src="/images/video/wps2.png" alt="SIP点播流程"></p>
+<h2 id="RTMP-HTTP-HLS-HTTP-FLV"><a href="#RTMP-HTTP-HLS-HTTP-FLV" class="headerlink" title="RTMP/HTTP-HLS/HTTP-FLV"></a>RTMP/HTTP-HLS/HTTP-FLV</h2><p>RTMP、HTTP-HLS与HTTP-FLV目前市面上比较常用的流媒体协议，都能基于浏览器来观看。</p>
+<ul>
+<li><p>RTMP：实时消息传送协议，基于FLASH播放器的私有协议，默认使用端口 1935。RTMP一般被切割一个个块（chunk）的形式基于TCP协议上传输的明文协议。市面上的摄像头基本都会支持RTMP的形式，而且RTMP一般延时在 1-3s 之间相对延时较低，不过目前来说谷歌禁用了FLASH，可能对RTMP支持可能有所减弱</p>
+</li>
+<li><p>HTTP-HLS：HTTP Live Streaming，苹果公司基于HTTP的流媒体传输协议。工作原理是在服务端将视频流切片成ts小文件形式，通过m3u8索引文件访问ts文件。不过HLS的延迟在10s以上，且文件比较碎片化比较难以保存，但是有利有弊，正因为有ts文件落地，可支持回放等功能。</p>
+</li>
+<li><p>HTTP-FLV：Flash Video，主要是将音视频数据封装成FLV格式，然后通过 HTTP 协议传输给客户端。像B站都是使用该协议进行PC页面播放。FLV延迟比较低。</p>
+</li>
+<li><p>ws-flv：ws-flv直播技术基本与http-flv一致，无非是传输介质换成了websocket协议，除了解除了http-flv不能同时打开过多同域名下的直播窗口的限制，其他技术特性、参数基本与http-flv一致。目前看，ws-flv既适合视频监控(可以同时打开多路监控视频)也适合视频直播行业，是rtmp很高的升级替代方案。</p>
+</li>
+<li>webrtc：webrtc是谷歌主导的视频通话技术标准，目前各大主流浏览器都兼容该标准。通过该技术，用户可以在浏览器上实现无插件的视频通话，该技术也可以用于实现低延时的视频直播。目前业界也有很多基于webrtc的应用和产品，但是很多局限于视频聊天等低延时交互式场景，在视频监控领域，目前还尚未流行。而且该技术栈目前还在持续更新，技术难点太多，要与视频监控领域融合还需时日。</li>
+</ul>
+<h3 id="协议介绍-3"><a href="#协议介绍-3" class="headerlink" title="协议介绍"></a>协议介绍</h3><h4 id="RTMP"><a href="#RTMP" class="headerlink" title="RTMP"></a>RTMP</h4><p><img src="/images/video/hls-message.png" alt="RTMP"></p>
+<p>具体可参考：<a href="https://www.jianshu.com/p/d511d59b185c" target="_blank" rel="noopener">RTMP协议详解</a></p>
+<h4 id="HLS"><a href="#HLS" class="headerlink" title="HLS"></a>HLS</h4><p><a href="https://www.jianshu.com/p/d511d59b185c" target="_blank" rel="noopener">HLS协议详解</a></p>
+<p>以下简单介绍下m3u8的相关内容</p>
+<p><img src="/images/video/hls.png" alt="m3u8"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">EXTM3U：每个M3U文件第一行必须是这个tag，请标示作用</span><br><span class="line"></span><br><span class="line">EXT-X-MEDIA-SEQUENCE:7</span><br><span class="line">每一个media URI 在 PlayList中只有唯一的序号，相邻之间序号+1, 一个media URI并不是必须要包含的，如果没有，默认为0</span><br><span class="line"></span><br><span class="line">EXTINF:</span><br><span class="line">duration 指定每个媒体段(ts)的持续时间（秒），仅对其后面的URI有效，title是下载资源的url</span><br><span class="line"></span><br><span class="line">EXT-X-TARGETDURATION</span><br><span class="line">指定最大的媒体段时间长（秒）。所以#EXTINF中指定的时间长度必须小于或是等于这个最大值。这个tag在整个PlayList文件中只能出现一 次（在嵌套的情况下，一般有真正ts url的m3u8才会出现该tag）</span><br><span class="line"></span><br><span class="line">EXT-X-KEY</span><br><span class="line">表示怎么对media segments进行解码。其作用范围是下次该tag出现前的所有media URI，属性为NONE 或者 AES-128。NONE表示 URI以及IV（Initialization Vector）属性必须不存在， AES-128(Advanced EncryptionStandard)表示URI必须存在，IV可以不存在。</span><br><span class="line">对于AES-128的情况，keytag和URI属性共同表示了一个key文件，通过URI可以获得这个key，如果没有IV（Initialization Vector）,则使用序列号作为IV进行编解码，将序列号的高位赋到16个字节的buffer中，左边补0；如果有IV，则将改值当成16个字节的16进制数。</span><br><span class="line"></span><br><span class="line">EXT-X-PROGRAM-DATE-TIME</span><br><span class="line">将一个绝对时间或是日期和一个媒体段中的第一个sample相关联，只对下一个meida URI有效，格式如#EXT-X-PROGRAM-DATE-TIME:</span><br><span class="line">For example: #EXT-X-PROGRAM-DATE-TIME:2010-02-19T14:54:23.031+08:00</span><br><span class="line"></span><br><span class="line">EXT-X-ALLOW-CACHE</span><br><span class="line">是否允许做cache，这个可以在PlayList文件中任意地方出现，并且最多出现一次，作用效果是所有的媒体段。格式如下：#EXT-X-ALLOW-CACHE:</span><br><span class="line"></span><br><span class="line">EXT-X-PLAYLIST-TYPE</span><br><span class="line">提供关于PlayList的可变性的信息， 这个对整个PlayList文件有效，是可选的，格式如下：#EXT-X-PLAYLIST-TYPE:：如果是VOD，则服务器不能改变PlayList 文件；如果是EVENT，则服务器不能改变或是删除PlayList文件中的任何部分，但是可以向该文件中增加新的一行内容。</span><br><span class="line"></span><br><span class="line">EXT-X-ENDLIST</span><br><span class="line">表示PlayList的末尾了，它可以在PlayList中任意位置出现，但是只能出现一个，格式如下：#EXT-X-ENDLIST</span><br><span class="line"></span><br><span class="line">EXT-X-MEDIA</span><br><span class="line">被用来在PlayList中表示相同内容的不用语种/译文的版本，比如可以通过使用3个这种tag表示3中不用语音的音频，或者用2个这个tag表示不同角度的video在PlayLists中。这个标签是独立存在的，属性包含：</span><br><span class="line">URI：如果没有，则表示这个tag描述的可选择版本在主PlayList的EXT-X-STREAM-INF中存在;</span><br><span class="line">TYPE:AUDIO and VIDEO;</span><br><span class="line">GROUP-ID:具有相同ID的MEDIAtag，组成一组样式；</span><br><span class="line">LANGUAGE：确定使用的主要语言</span><br><span class="line">NAME：人类可读的语言的翻译</span><br><span class="line">DEFAULT：YES或是NO，默认是No，如果是YES，则客户端会以这种选项来播放，除非用户自己进行选择。</span><br><span class="line">AUTOSELECT：YES或是NO，默认是No，如果是YES，则客户端会根据当前播放环境来进行选择（用户没有根据自己偏好进行选择的前提下）。</span><br><span class="line"></span><br><span class="line">EXT-X-STREAM-INF</span><br><span class="line">指定一个包含多媒体信息的 media URI 作为PlayList，一般做M3U8的嵌套使用，它只对紧跟后面的URI有效，格式如下：#EXT-X-STREAM-INF:有以下属性：</span><br><span class="line">BANDWIDTH：带宽，必须有。</span><br><span class="line">PROGRAM-ID：该值是一个十进制整数，惟一地标识一个在PlayList文件范围内的特定的描述。一个PlayList 文件中可能包含多个有相同ID的此tag。</span><br><span class="line">CODECS：不是必须的。</span><br><span class="line">RESOLUTION：分辨率。</span><br><span class="line">AUDIO：这个值必须和AUDIO类别的“EXT-X-MEDIA”标签中“GROUP-ID”属性值相匹配。</span><br><span class="line">VIDEO：同上</span><br></pre></td></tr></table></figure>
+<h4 id="FLV"><a href="#FLV" class="headerlink" title="FLV"></a>FLV</h4><p><a href="https://zhuanlan.zhihu.com/p/287220" target="_blank" rel="noopener">FLV协议详解</a></p>
+<h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><p><img src="/images/video/协议性能对比.png" alt="协议性能对比"></p>
+<h2 id="PES-TS-ES流"><a href="#PES-TS-ES流" class="headerlink" title="PES/TS/ES流"></a>PES/TS/ES流</h2><p>PES、TS、ES流都是用于封装视频、音频数据的数据流。</p>
+<p>ES流（Elementary Stream）：基本码流，不分段的音频、视频或其他信息的连续码流。</p>
+<p>PES流：把基本流ES分割成段，并加上相应头文件打包成形的打包基本码流。</p>
+<p>PS流（Program Stream）：节目流，将具有共同时间基准的一个或多个PES组合（复合）而成的单一数据流（用于播放或编辑系统，如m2p）。</p>
+<p>TS流（Transport Stream）：传输流，将具有共同时间基准或独立时间基准的一个或多个PES组合（复合）而成的单一数据流（用于数据传输）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面列了很多我在项目中所有用到过的协议，每种协议都有不同的封装格式以及各自不同属性，个人觉得对于开发者或者使用者来说不一定每种协议都要面面俱到，平常大概知道他们具体作用性能和普遍的属性之类就可以，到真正使用的时候再去深入了解，反而会更高效。以下，我总结下这段时间来对这几个协议的了解：<br>    <img src="/images/video/zlm.png" alt="协议"></p>
+<p>根据上图可以看出，一般来说推流的方式可能会议国标方式或者接入海康、大华等厂商的摄像头来直接推流到流媒体，而从流媒体转码成flv,hls等不同协议供客户端来拉流访问。</p>
+<p>参考</p>
+<ol>
+<li><p><a href="https://zhuanlan.zhihu.com/p/72917813" target="_blank" rel="noopener">关于RTSP/RTP/RTCP</a></p>
+</li>
+<li><p><a href="https://cloud.tencent.com/developer/news/387488" target="_blank" rel="noopener">会话初始协议SIP与SDP简介</a></p>
+</li>
+<li><p><a href="https://zhuanlan.zhihu.com/p/48100533" target="_blank" rel="noopener">RTMP、HTTP-FLV、HLS，你了解常见的三大直播协议吗
+</a></p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/视频/" rel="tag"># 视频</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/07/25/nginx支持流媒体/" rel="next" title="nginx支持流媒体">
+                <i class="fa fa-chevron-left"></i> nginx支持流媒体
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/07/25/Gateway源码分析(二)/" rel="prev" title="Gateway源码分析（二）">
+                Gateway源码分析（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jay-Luo" />
+            
+              <p class="site-author-name" itemprop="name">Jay-Luo</p>
+              <p class="site-description motion-element" itemprop="description">小小的天，大大的梦</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#目的"><span class="nav-number">1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总体"><span class="nav-number">2.</span> <span class="nav-text">总体</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-UDP"><span class="nav-number">2.1.</span> <span class="nav-text">TCP/UDP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RTP与RTCP"><span class="nav-number">2.2.</span> <span class="nav-text">RTP与RTCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">2.2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协议介绍"><span class="nav-number">2.2.2.</span> <span class="nav-text">协议介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RTP协议结构"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">RTP协议结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RTCP协议结构"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">RTCP协议结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RTSP"><span class="nav-number">2.3.</span> <span class="nav-text">RTSP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协议介绍-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">协议介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDP-SIP"><span class="nav-number">2.4.</span> <span class="nav-text">SDP/SIP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-2"><span class="nav-number">2.4.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协议介绍-2"><span class="nav-number">2.4.2.</span> <span class="nav-text">协议介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SIP介绍"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">SIP介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SDP协议"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">SDP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#点播流程"><span class="nav-number">2.4.2.3.</span> <span class="nav-text">点播流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RTMP-HTTP-HLS-HTTP-FLV"><span class="nav-number">2.5.</span> <span class="nav-text">RTMP/HTTP-HLS/HTTP-FLV</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#协议介绍-3"><span class="nav-number">2.5.1.</span> <span class="nav-text">协议介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RTMP"><span class="nav-number">2.5.1.1.</span> <span class="nav-text">RTMP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HLS"><span class="nav-number">2.5.1.2.</span> <span class="nav-text">HLS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FLV"><span class="nav-number">2.5.1.3.</span> <span class="nav-text">FLV</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能对比"><span class="nav-number">2.5.2.</span> <span class="nav-text">性能对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PES-TS-ES流"><span class="nav-number">2.6.</span> <span class="nav-text">PES/TS/ES流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay-Luo</span>
+
+  
+</div>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
