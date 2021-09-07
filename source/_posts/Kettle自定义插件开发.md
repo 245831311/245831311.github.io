@@ -1,6 +1,6 @@
 ---
 title: kettle自定义插件开发
-date: 2017-02-22 12:00:00
+date: 2021-08-19 12:00:00
 categories: 
 - 大数据
 tags:
@@ -97,7 +97,7 @@ i18nPackageName |如果i18nPackageName在批注属性中提供了该属性，则
 
 StepInterface当转换运行时，类实现负责实际的行处理。
 
-![StepInterface](https://note.youdao.com/yws/public/resource/9ad28471772957ddecb1e977ed1a2ac0/xmlnote/9B1127DC0D95467C84BDA85446348950/12098)
+![StepInterface](/images/bdata/kettle流程.png)
 
 接口常用方法介绍：
 

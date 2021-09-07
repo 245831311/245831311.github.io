@@ -78,8 +78,8 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/245831311/245831311.github.io
-  branch: master
+  repo: https://245831311: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@github.com/245831311/245831311.github.io
+  branch: hexo
 
 #打赏功能  
 #wechatpay: /wechatpay.png

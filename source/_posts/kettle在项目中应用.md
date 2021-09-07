@@ -1,6 +1,6 @@
 ---
 title: kettle在项目中应用
-date: 2017-02-22 12:00:00
+date: 2021-08-20 12:00:00
 categories: 
 - 大数据
 tags:
@@ -19,7 +19,7 @@ Kettle从名称就可以知道“水壶”，顾名思义就是封装了很多�
 
 下图可以看出,kettle包含了丰富的功能。
 
-![Kettle功能图](https://note.youdao.com/yws/public/resource/9ad28471772957ddecb1e977ed1a2ac0/xmlnote/A8E422918CF347FFA48CDE9904FBBE0D/11674)
+![Kettle功能图](/images/bdata/kettle功能图.png)
 
 <html>
 <center>kettle功能图</center>
