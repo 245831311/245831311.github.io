@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="视频," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="背景由于项目接入了二千多路摄像头，三十台机器集群，应项目的要求对程序项目进行压测，目标是测试到一台流媒体服务器能同时并发支撑多小路视频，从而推测整个集群的能力，也为以后的扩展。 前期准备 服务器1台 配置：CPU 8核,内存 16G  客户端1台 配置：CPU 8核,内存 16G  监控服务端工具nmon： 压测工具：自研发的一款拉流工具，针对我们视频项目接口定制化开发  300个海康摄像头192">
+<meta name="keywords" content="视频">
+<meta property="og:type" content="article">
+<meta property="og:title" content="视频性能压测">
+<meta property="og:url" content="http://yoursite.com/2021/07/22/视频性能压测/index.html">
+<meta property="og:site_name" content="Jay-Luo">
+<meta property="og:description" content="背景由于项目接入了二千多路摄像头，三十台机器集群，应项目的要求对程序项目进行压测，目标是测试到一台流媒体服务器能同时并发支撑多小路视频，从而推测整个集群的能力，也为以后的扩展。 前期准备 服务器1台 配置：CPU 8核,内存 16G  客户端1台 配置：CPU 8核,内存 16G  监控服务端工具nmon： 压测工具：自研发的一款拉流工具，针对我们视频项目接口定制化开发  300个海康摄像头192">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/video/压测流程图.png">
+<meta property="og:image" content="http://yoursite.com/images/video/压测结果一.png">
+<meta property="og:image" content="http://yoursite.com/images/video/压测结果二.png">
+<meta property="og:image" content="http://yoursite.com/images/video/压测结果三.png">
+<meta property="og:image" content="http://yoursite.com/images/video/压测结果四.png">
+<meta property="og:updated_time" content="2021-09-06T16:33:37.107Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="视频性能压测">
+<meta name="twitter:description" content="背景由于项目接入了二千多路摄像头，三十台机器集群，应项目的要求对程序项目进行压测，目标是测试到一台流媒体服务器能同时并发支撑多小路视频，从而推测整个集群的能力，也为以后的扩展。 前期准备 服务器1台 配置：CPU 8核,内存 16G  客户端1台 配置：CPU 8核,内存 16G  监控服务端工具nmon： 压测工具：自研发的一款拉流工具，针对我们视频项目接口定制化开发  300个海康摄像头192">
+<meta name="twitter:image" content="http://yoursite.com/images/video/压测流程图.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/07/22/视频性能压测/"/>
+
+
+
+
+
+  <title>视频性能压测 | Jay-Luo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bc6214a71594310d314698ac546aca76";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jay-Luo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小小的天，大大的梦</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/22/视频性能压测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">视频性能压测</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-22T11:16:39+08:00">
+                2021-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/视频/" itemprop="url" rel="index">
+                    <span itemprop="name">视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>由于项目接入了二千多路摄像头，三十台机器集群，应项目的要求对程序项目进行压测，目标是测试到一台流媒体服务器能同时并发支撑多小路视频，从而推测整个集群的能力，也为以后的扩展。</p>
+<h2 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h2><ul>
+<li><p>服务器1台</p>
+<p>配置：CPU 8核,内存 16G</p>
+</li>
+<li><p>客户端1台</p>
+<p>配置：CPU 8核,内存 16G</p>
+</li>
+<li>监控服务端工具nmon：</li>
+<li><p>压测工具：自研发的一款拉流工具，针对我们视频项目接口定制化开发</p>
+</li>
+<li><p>300个海康摄像头1920×1080P(可用正式环境)</p>
+</li>
+</ul>
+<h2 id="压测"><a href="#压测" class="headerlink" title="压测"></a>压测</h2><p>在压测的时候我认为需要清楚了解整个网络架构图，这样才能发现哪些地方存在的瓶颈，便于后期针对瓶颈地方进行压测。以下是我大致画出当时项目的网络环境：</p>
+<p><img src="/images/video/压测流程图.png" alt="网络架构图"></p>
+<p>经过分析，存在瓶颈：</p>
+<ol>
+<li>客户端自研拉流程序m1存在拉流的性能瓶颈</li>
+<li>流媒体北向的拉流分发能力m2的瓶颈</li>
+<li>流媒体南向的推流能力m3的瓶颈</li>
+<li>验证m4出口是否有千兆带宽</li>
+</ol>
+<h3 id="场景一"><a href="#场景一" class="headerlink" title="场景一"></a>场景一</h3><p>场景：多个用户，同时访问1路摄像头视频</p>
+<p>目的：测出单台流媒体服务北向分发能力m2的极限。</p>
+<p>为了减少自研发的客户端拉流程序瓶颈对本次压力测试造成影响，使用多个客户端进行拉流。  </p>
+<p><img src="/images/video/压测结果一.png" alt="场景一"></p>
+<p>结论：160个用户访问同一路摄像头视频时，系统能够稳定工作；北向并发能力达到160以上。</p>
+<h3 id="场景二"><a href="#场景二" class="headerlink" title="场景二"></a>场景二</h3><p>场景：两个客户端分别请求N路不同的视频，共请求2N路视频。每路视频1人观看。</p>
+<p>目的：测出单台流媒体服务南向m3能力的极限。</p>
+<p><img src="/images/video/压测结果二.png" alt="场景二"></p>
+<p>结论：南向并发处理80路摄像头视频时，系统能够稳定工作；南向并发处理100路摄像头视频时，网络出现较大波动；因此，单个流媒体服务的南向处理能力，为90路视频。</p>
+<h3 id="场景三"><a href="#场景三" class="headerlink" title="场景三"></a>场景三</h3><p>场景：两个客户端，分别请求两个不同的流媒体服务器；每个客户端请求N路视频，共请求2N路视频。</p>
+<p>目的：南向交换机性能瓶颈测试。</p>
+<p><img src="/images/video/压测结果三.png" alt="场景三"></p>
+<p>结论：单台客户端服务器最高可以处理南向70路视频，<br>单台流媒体服务器最多可处理南向90路视频。</p>
+<h3 id="场景四"><a href="#场景四" class="headerlink" title="场景四"></a>场景四</h3><p>场景：两个客户端，分别请求一台服务器上的两个流媒体服务；每个客户端请求N路视频，共请求2N路视频。</p>
+<p>目的：压测m4出口带宽是否达到千兆瓶颈</p>
+<p><img src="/images/video/压测结果四.png" alt="场景四"></p>
+<p>结论：当请求并发90路视频时，单台流媒体服务器系统能够稳定工作，当并发请求100路视频时，网络IO出现较大波动。因此，单台流媒体服务器南向摄像头最多只能处理90路视频</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实对于我来说，有幸参与了这次压测的整个过程，其中包括了跟项目组的沟通，跟第三方供应商技术交流等等。其实对于这类压测，最好能确认好控制单一要素，控制单一要素那就需要将每个步骤分层，然后将其余部分当作整体看待。举个例子，要想测试m3南向并发处理能力，那就将m3往下的部分当作整体，将其他没关要素降到影响最低（譬如客户端是瓶颈因素，那就水平扩展客户端），逐步增大压力，观察服务器等指标，如果出现一些业务报错或者其他问题往往就是触发到瓶颈，这个需要根据业务场景来定。由于我们这里偏向于IO密集型，所以一般都是观察网络IO主要是上下行带宽的指标为主。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/视频/" rel="tag"># 视频</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/25/书籍记录/" rel="next" title="书籍记录">
+                <i class="fa fa-chevron-left"></i> 书籍记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/07/23/选型视频网关/" rel="prev" title="选型视频网关">
+                选型视频网关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jay-Luo" />
+            
+              <p class="site-author-name" itemprop="name">Jay-Luo</p>
+              <p class="site-description motion-element" itemprop="description">小小的天，大大的梦</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#前期准备"><span class="nav-number">2.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#压测"><span class="nav-number">3.</span> <span class="nav-text">压测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景一"><span class="nav-number">3.1.</span> <span class="nav-text">场景一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景二"><span class="nav-number">3.2.</span> <span class="nav-text">场景二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景三"><span class="nav-number">3.3.</span> <span class="nav-text">场景三</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景四"><span class="nav-number">3.4.</span> <span class="nav-text">场景四</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay-Luo</span>
+
+  
+</div>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
