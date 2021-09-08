@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="笔记," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="该编文章主要是记录下使用ST3和在ST3编辑markdown1. 安装ST3安装过程及其简单，直接go to anything 就可以了。 2. 下载支持插件 下载package control插件(网上一堆信息，不做详细说明)主要参考：https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/ 下载markdownEd">
+<meta name="keywords" content="笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="st3使用配置">
+<meta property="og:url" content="http://yoursite.com/2017/01/22/使用Sublime3/index.html">
+<meta property="og:site_name" content="Jay-Luo">
+<meta property="og:description" content="该编文章主要是记录下使用ST3和在ST3编辑markdown1. 安装ST3安装过程及其简单，直接go to anything 就可以了。 2. 下载支持插件 下载package control插件(网上一堆信息，不做详细说明)主要参考：https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/ 下载markdownEd">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-09-07T08:00:52.025Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="st3使用配置">
+<meta name="twitter:description" content="该编文章主要是记录下使用ST3和在ST3编辑markdown1. 安装ST3安装过程及其简单，直接go to anything 就可以了。 2. 下载支持插件 下载package control插件(网上一堆信息，不做详细说明)主要参考：https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/ 下载markdownEd">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/22/使用Sublime3/"/>
+
+
+
+
+
+  <title>st3使用配置 | Jay-Luo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?bc6214a71594310d314698ac546aca76";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jay-Luo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小小的天，大大的梦</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/22/使用Sublime3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">st3使用配置</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-22T11:16:39+08:00">
+                2017-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/sublime3使用笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">sublime3使用笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<h2 id="该编文章主要是记录下使用ST3和在ST3编辑markdown"><a href="#该编文章主要是记录下使用ST3和在ST3编辑markdown" class="headerlink" title="该编文章主要是记录下使用ST3和在ST3编辑markdown"></a>该编文章主要是记录下使用ST3和在ST3编辑markdown</h2><h3 id="1-安装ST3"><a href="#1-安装ST3" class="headerlink" title="1. 安装ST3"></a>1. 安装ST3</h3><p>安装过程及其简单，直接go to anything 就可以了。</p>
+<h3 id="2-下载支持插件"><a href="#2-下载支持插件" class="headerlink" title="2. 下载支持插件"></a>2. 下载支持插件</h3><ol>
+<li>下载package control插件(网上一堆信息，不做详细说明)<br>主要参考：<a href="https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/" target="_blank" rel="noopener">https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/</a></li>
+<li><p>下载markdownEditing(编辑markdown,提供快捷键)<br><em>流程:ctrl+Shift+P-&gt;install package-&gt;下载markdownEditing插件-&gt;在multimarkdown setting user下设置</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      &quot;enable_table_editor&quot;: true,</span><br><span class="line">      &quot;highlight_line&quot;: true,</span><br><span class="line">      &quot;line_numbers&quot;: true,   // 显示行号</span><br><span class="line">      &quot;tab_size&quot;: 4,          // tab宽度</span><br><span class="line">      &quot;wrap_width&quot;: 300,</span><br><span class="line">      &quot;word_wrap&quot;: true,      // 自动换行</span><br><span class="line">      &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor-Dark.tmTheme&quot;,</span><br><span class="line">      // &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor.tmTheme&quot;,</span><br><span class="line">      // &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor-Dark.tmTheme&quot;,</span><br><span class="line">      // &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor-Yellow.tmTheme&quot;,</span><br><span class="line">      &quot;mde.keep_centered&quot;: true,// 可以保持你正在编辑的行始终处于屏幕的中间</span><br><span class="line">      &quot;extensions&quot;:</span><br><span class="line">      [</span><br><span class="line">          &quot;mmd&quot;,</span><br><span class="line">          &quot;md&quot;</span><br><span class="line">      ]</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载Markdown Preview或MarkdownLivePreview.(预览markdown)<br><em>markdown preview下载流程:ctrl+Shift+P-&gt;install package-&gt;输入插件名称markdown preview-&gt;key bindings插入下面代码</em></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;keys&quot;: [&quot;alt+m&quot;], &quot;command&quot;: &quot;markdown_preview&quot;, &quot;args&quot;: &#123;&quot;target&quot;: &quot;browser&quot;, &quot;parser&quot;:&quot;markdown&quot;&#125; &#125;,</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="3-记录st3常用的快捷键"><a href="#3-记录st3常用的快捷键" class="headerlink" title="3. 记录st3常用的快捷键"></a>3. 记录st3常用的快捷键</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+← 向左单位性地移动光标，快速移动光标。</span><br><span class="line">Ctrl+→ 向右单位性地移动光标，快速移动光标。</span><br><span class="line">shift+↑ 向上选中行。</span><br><span class="line">shift+↓ 向下选中行。</span><br><span class="line">Ctrl+Shift+K 删除整行。</span><br><span class="line">Ctrl+/ 注释单行。</span><br><span class="line">Ctrl+Shift+/ 注释多行。</span><br><span class="line">Ctrl+K+U 转换大写。</span><br><span class="line">Ctrl+K+L 转换小写。</span><br><span class="line">Ctrl+F 打开底部搜索框，查找关键字。</span><br><span class="line">Ctrl+P 打开搜索框。提供：<span class="number">1</span>、输入当前项目中的文件名，快速搜索文件，<span class="number">2</span>、Ctrl+G功能，<span class="number">3</span>、Ctrl+R功能，<span class="number">4</span>、Ctrl+：功能</span><br><span class="line">Ctrl+G 自动带：，输入数字跳转到该行代码</span><br><span class="line">Ctrl+R 自动带@，查找文件中的函数名</span><br><span class="line">Ctrl+： 自动带#，查找文件中的变量名、属性名等</span><br><span class="line">Ctrl+Shift+P 打开命令框。场景栗子：打开命名框，输入关键字，调用sublime text或插件的功能，例如使用<span class="keyword">package</span>安装插件。</span><br><span class="line">Esc 退出搜索框，命令框等。</span><br><span class="line">Alt+Shift+<span class="number">1</span> 窗口分屏<span class="number">1</span>-<span class="number">4</span>(水平),<span class="number">5</span>（等分）,<span class="number">89</span>（垂直）</span><br><span class="line">Ctrl+K+B 开启/关闭侧边栏。</span><br></pre></td></tr></table></figure>
+<h3 id="4-markdownEditing常用的快捷键"><a href="#4-markdownEditing常用的快捷键" class="headerlink" title="4. markdownEditing常用的快捷键"></a>4. markdownEditing常用的快捷键</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+Win+V 选中的内容将自动转换为行内式超链接，链接到剪贴板中的内容</span><br><span class="line">Ctrl+Win+R 选中的内容将自动转换为参考式超链接，链接到剪贴板中的内容</span><br><span class="line">Ctrl+Alt+R 弹出提示框插入一个参考式超链接，在提示框中输入链接内容和定义参考ID[^<span class="number">3</span>]</span><br><span class="line">Ctrl+Win+K 插入一个标准的行内式超链接</span><br><span class="line">Win+Shift+K 插入一个标准的行内式图片（此快捷键可能与输入法有冲突）</span><br><span class="line">Ctrl+<span class="number">1</span> 至 Ctrl+<span class="number">6</span> 插入一级至六级标题</span><br><span class="line">FN+Alt+i 选中的内容转换为斜体</span><br><span class="line">FN+Alt+b 选中的内容转换为粗体[^<span class="number">1</span>]</span><br><span class="line">Ctrl+Shift+<span class="number">6</span> 自动插入一个脚注，并跳转到该脚注的定义中。</span><br><span class="line">Alt+Shift+F 查找没有定义的脚注并自动添加其定义链接</span><br><span class="line">Alt+Shift+G 查找没有定义的参考式超链接并自动添加其定义链接</span><br><span class="line">Ctrl+Alt+S 脚注排序</span><br><span class="line">Ctrl+Shift+. 缩进当前内容</span><br><span class="line">Ctrl+Shift+, 提前当前内容</span><br></pre></td></tr></table></figure>
+<p><strong>PS</strong> 参考:</p>
+<ol>
+<li>快捷键总结:<a href="http://blog.csdn.net/u012771929/article/details/30030249" target="_blank" rel="noopener">http://blog.csdn.net/u012771929/article/details/30030249</a></li>
+<li>st3使用配置:<a href="http://www.jianshu.com/p/62241c7ecec9" target="_blank" rel="noopener">http://www.jianshu.com/p/62241c7ecec9</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/22/hexo用法/" rel="prev" title="hexo的搭建与使用">
+                hexo的搭建与使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Jay-Luo" />
+            
+              <p class="site-author-name" itemprop="name">Jay-Luo</p>
+              <p class="site-description motion-element" itemprop="description">小小的天，大大的梦</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#该编文章主要是记录下使用ST3和在ST3编辑markdown"><span class="nav-number">1.</span> <span class="nav-text">该编文章主要是记录下使用ST3和在ST3编辑markdown</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安装ST3"><span class="nav-number">1.1.</span> <span class="nav-text">1. 安装ST3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-下载支持插件"><span class="nav-number">1.2.</span> <span class="nav-text">2. 下载支持插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-记录st3常用的快捷键"><span class="nav-number">1.3.</span> <span class="nav-text">3. 记录st3常用的快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-markdownEditing常用的快捷键"><span class="nav-number">1.4.</span> <span class="nav-text">4. markdownEditing常用的快捷键</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jay-Luo</span>
+
+  
+</div>
+
+
+  <div class="powered-by">个人专属</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">博客 &mdash; NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
