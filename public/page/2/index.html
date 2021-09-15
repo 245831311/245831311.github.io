@@ -272,6 +272,845 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/25/gateway源码分析(一)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/07/25/gateway源码分析(一)/" itemprop="url">Gateway源码分析（一）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-25T11:16:39+08:00">
+                2021-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/视频/" itemprop="url" rel="index">
+                    <span itemprop="name">视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>当选用了SpringCloud Gateway作为视频项目的网关之后,出于学习的心态，看下视频网关是如何构造起来的。</p>
+<h2 id="Spring-WebFlux学习"><a href="#Spring-WebFlux学习" class="headerlink" title="Spring WebFlux学习"></a>Spring WebFlux学习</h2><p>阅读源码之前首先学习下WebFlux基础概念和相关常用的API</p>
+<p>Spring WebFlux简单说是与Spring MVC类似的一门响应式异步非阻塞Web端控制框架。与Spring MVC有着相同功能的注解</p>
+<ol>
+<li>什么是响应式编程(Reactive)</li>
+</ol>
+<p>官方解释：</p>
+<blockquote>
+<p>The term, “reactive,”  refers to programming models that are built around reacting to change<br>响应式编程是一种围绕对变化作出反应而构建的编程模型。</p>
+</blockquote>
+<p>后面给出了例子：</p>
+<blockquote>
+<p>network components reacting to I/O events, UI controllers reacting to mouse events, and others. In that sense, non-blocking is reactive, because, instead of being blocked, we are now in the mode of reacting to notifications as operations complete or data becomes available.<br>网络组件对IO事件的响应，UI控制器对鼠标事件的响应。从这个意义上说，非阻塞也是响应式,因为我们现在也是在操作完成或者数据可用的时候作出响应的模式，而不是被阻塞。</p>
+</blockquote>
+<ol>
+<li>什么是背压（back pressure）</li>
+</ol>
+<p>官方解析：</p>
+<blockquote>
+<p>Reactive Streams is a small spec (also adopted in Java 9) that defines the interaction between asynchronous components with back pressure. For example a data repository (acting as Publisher) can produce data that an HTTP server (acting as Subscriber) can then write to the response. The main purpose of Reactive Streams is to let the subscriber control how quickly or how slowly the publisher produces data.<br>响应式流是一个小小的规范，定义了带有背压异步组件交互。例如，数据仓库（作为发布者）产生数据使HTTP服务（作为订阅者）能响应。主要目的就是响应式能让订阅者控制发布者发布数据的快与慢。</p>
+</blockquote>
+<p>其实上述说白了就是订阅者能够通过生产者需要多小数据，这样能够以免生产者无限量产生数据压垮订阅者。</p>
+<ol>
+<li>SpringMVC与WebFlux选择<br><img src="https://docs.spring.io/spring-framework/docs/current/reference/html/images/spring-mvc-and-webflux-venn.png" alt="webFlux&amp;SpringMVC"></li>
+</ol>
+<ul>
+<li><p>如果您有运行正常的Spring MVC应用程序，则无需更改。命令式编程是编写，理解和调试代码的最简单方法。您有最大的库选择空间，因为从历史上看，大多数库都是阻塞的。</p>
+</li>
+<li><p>如果您已经在选择无阻塞的Web堆栈，Spring WebFlux可以提供与该领域其他服务器相同的执行模型优势，还可以选择服务器（Netty，Tomcat，Jetty，Undertow和Servlet 3.1+容器），选择编程模型（带注释的控制器和功能性Web端点），以及选择反应式库（Reactor，RxJava或其他）。</p>
+</li>
+<li><p>如果您对与Java 8 lambda或Kotlin一起使用的轻量级功能性Web框架感兴趣，则可以使用Spring WebFlux功能性Web端点。对于要求较低复杂性的较小应用程序或微服务（可以受益于更高的透明度和控制）而言，这也是一个不错的选择。</p>
+</li>
+<li><p>在微服务架构中，您可以混合使用带有Spring MVC或Spring WebFlux控制器或带有Spring WebFlux功能端点的应用程序。在两个框架中都支持相同的基于注释的编程模型，这使得重用知识变得更加容易，同时还为正确的工作选择了正确的工具。</p>
+</li>
+<li><p>评估应用程序的一种简单方法是检查其依赖关系。如果您要使用阻塞性持久性API（JPA，JDBC）或网络API，则Spring MVC至少是通用体系结构的最佳选择。使用Reactor和RxJava在单独的线程上执行阻塞调用在技术上是可行的，但您不会充分利用非阻塞Web堆栈。</p>
+</li>
+<li><p>如果您的Spring MVC应用程序具有对远程服务的调用，请尝试使用active WebClient。您可以直接从Spring MVC控制器方法返回反应类型（Reactor，RxJava或其他）。每个呼叫的等待时间或呼叫之间的相互依赖性越大，好处就越明显。Spring MVC控制器也可以调用其他反应式组件。</p>
+</li>
+</ul>
+<ol>
+<li>WebFlux提供了两种模型</li>
+</ol>
+<ul>
+<li>注解控制器（Annotated Controllers）：与Spring MVC有一致的注解，都是基于spring-web模型。一个显著的区别是，WebFlux也支持响应式@RequestBody参数。</li>
+<li>函数终端（Functional Endpoints）：基于Lambda,轻量级和函数编程模型。提供了大量的方法来路由和处理请求。与注解控制器（Annotated Controllers）最大区别就是函数端模型能够负责请求的从头到尾的处理而不是只是通过声明注解然后回调。</li>
+</ul>
+<h3 id="API"><a href="#API" class="headerlink" title="API"></a>API</h3><p>两个Publisher接口：Flux与Mono。两者区别在于Flux是代表多个元素的发布者，Mono是单个元素的发布者.</p>
+<p>Mono 实现了 Publisher 接口，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">empty()：创建一个不包含任何元素，只发布结束消息的序列。</span><br><span class="line">just()：可以指定序列中包含的全部元素。创建出来的 Mono序列在发布这些元素之后会自动结束。</span><br><span class="line">justOrEmpty()：从一个 Optional 对象或可能为 null 的对象中创建 Mono。只有 Optional 对象中包含值或对象不为 null 时，Mono 序列才产生对应的元素。</span><br><span class="line">error(Throwable error)：创建一个只包含错误消息的序列。</span><br><span class="line">never()：创建一个不包含任何消息通知的序列。</span><br><span class="line">fromCallable()、fromCompletionStage()、fromFuture()、fromRunnable()和 fromSupplier()：分别从 Callable、CompletionStage、CompletableFuture、Runnable 和 Supplier 中创建 Mono。</span><br><span class="line">delay(Duration duration)和 delayMillis(long duration)：创建一个 Mono 序列，在指定的延迟时间之后，产生数字 0 作为唯一值。</span><br><span class="line">create()：通过 create()方法来使用 MonoSink 来创建 Mono。</span><br></pre></td></tr></table></figure></p>
+<p>Flux<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">just：可以指定序列中包含的全部元素。创建出来的 Flux 序列在发布这些元素之后会自动结束。</span><br><span class="line">fromArray、fromIterable、fromStream：可以从一个数组、Iterable 对象或 Stream 对象中创建 Flux 对象。</span><br><span class="line">empty()：创建一个不包含任何元素，只发布结束消息的序列,在响应式编程中，流的传递是基于元素的，empty表示没有任何元素，所以不会进行后续传递，需要用switchIfEmpty等处理</span><br><span class="line">error(Throwable error)：创建一个只包含错误消息的序列。</span><br><span class="line">never()：创建一个不包含任何消息通知的序列。使用示例：</span><br><span class="line">range(int start, int count)：创建包含从 start 起始的 count 个数量的 Integer 对象的序列。</span><br><span class="line">intervalMillis(long period)： interval()方法的作用相同，只不过该方法通过毫秒数来指定时间间隔和延迟时间。</span><br><span class="line">create()：与 generate()方法的不同之处在于所使用的是 FluxSink 对象。FluxSink 支持同步和异步的消息产生，并且可以在一次调用中产生多个元素。</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这一章主要是简单记录下WebFlux的介绍以及简单说明下WebFlux相关的几个概念。WebFlux的官方文档还是相对比较完善的，里面都有挺详细的说明，我就不一一照搬到这里。下一章就开始阅读Gateway的代码，看下Gateway里面是如何使用WebFlux构建网关。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#spring-webflux" target="_blank" rel="noopener">webFlux官网</a></li>
+</ul>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/92460075" target="_blank" rel="noopener">外行人都能看得懂的WebFlux</a></li>
+</ul>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&amp;mid=2247485692&amp;idx=1&amp;sn=a6b3f040b13fa2324992b11a927e34dc&amp;chksm=ebd749fddca0c0eb1b05c08ede7ee4a44699584fbc0c3449ec2cac7642fd13819470ec7f44d8&amp;token=1024331018&amp;lang=zh_CN#rd" target="_blank" rel="noopener">最近学到的Lambda表达式基础知识</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/25/Gateway源码分析(二)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/07/25/Gateway源码分析(二)/" itemprop="url">Gateway源码分析（二）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-25T11:16:39+08:00">
+                2021-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/视频/" itemprop="url" rel="index">
+                    <span itemprop="name">视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>这一章开始记录我开始Gateway阅读之路，看下究竟是如何实现网关。</p>
+<h1 id="个人疑问"><a href="#个人疑问" class="headerlink" title="个人疑问"></a>个人疑问</h1><ol>
+<li><p>Gateway的网关框架是如何接收请求并转发</p>
+</li>
+<li><p>如何执行Filter</p>
+</li>
+<li><p>如何加载路由、过滤器、断言等信息</p>
+</li>
+</ol>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><h2 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactI&gt;</span><br><span class="line">	&lt;version&gt;2.1.0.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h2><p>还是一样的图<br><img src="/images/video/gateway网关图.png" alt="Gateway框架"></p>
+<h2 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h2><p>gateway-core.jar是gateway的核心包，主要的实现都在里面。阅读代码前最好先知道个个包的主要功能.</p>
+<p><img src="/images/video/gateway的jar包架构图.png" alt="包组成"></p>
+<ul>
+<li>actuate</li>
+</ul>
+<p>该包主要是gateway自带的一个控制器GatewayControllerEndpoint，该endpiont提供了关于filter及routes的信息查询以及指定route信息更新的rest api，这给web界面提供管理配置功能提供了极大的便利</p>
+<ul>
+<li>config</li>
+</ul>
+<p>该包主要是Gateway的配置实体类，譬如yml上面的配置GatewayProperties、全局的跨域配置GlobalCorsProperties等等。</p>
+<ul>
+<li>discovery</li>
+</ul>
+<p>该包主要是实现服务发现的功能。从服务注册中心获取服务注册信息，然后配置相应的路由</p>
+<ul>
+<li>event</li>
+</ul>
+<p>该包是一些发布事件的定义。</p>
+<ul>
+<li>filter</li>
+</ul>
+<p>该包包含了gateway所有内置的过滤器。</p>
+<ul>
+<li>handler</li>
+</ul>
+<p>该包主要包括了所有内置的Predicates断言，RoutePredicateHandlerMapping类是一个实现了将接收请求到转发到filter里面的功能，FilteringWebHandler主要是构造过滤器链。</p>
+<ul>
+<li>route</li>
+</ul>
+<p>该包主要是定义路由信息，构造路由等。</p>
+<ul>
+<li>support</li>
+</ul>
+<p>该包主要是一些工具方法。用于全局。</p>
+<h2 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="问题一：如何转发请求"><a href="#问题一：如何转发请求" class="headerlink" title="问题一：如何转发请求"></a>问题一：如何转发请求</h3><h4 id="DispatchHandler类"><a href="#DispatchHandler类" class="headerlink" title="DispatchHandler类"></a>DispatchHandler类</h4><p>WebFlux请求转发核心类：DispatchHandler</p>
+<p>DispatchHandler内部主要的私有字段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> List&lt;HandlerMapping&gt; handlerMappings;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> List&lt;HandlerAdapter&gt; handlerAdapters;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> List&lt;HandlerResultHandler&gt; resultHandlers;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HandlerMapping</td>
+<td>映射请求到一个处理器。该映射是基于一定的标准、细节因不同HandlerMapping而不同。<br>例如有注解控制器, 简单URL匹配映射等等。<br>主要的HandlerMapping实现：<br>1.有RequestMappingHandlerMapping对于注解的@RequestMapping。<br>2.RouterFunctionMapping 对应于函数式端点路由。<br>3.SimpleUrlHandlerMappingURI路径模式的显式注册。<br>4.WebHandler的实例</td>
+</tr>
+<tr>
+<td>HandlerAdapter</td>
+<td>帮助DispatcherHandler调用映射的请求的处理器，而不管该处理程序实际上是如何调用的。<br>例如执行一个注解控制器需要解释注解。其主要目的是帮助DispatcherHandler隐藏实现的细节。</td>
+</tr>
+<tr>
+<td>HandlerResultHandler</td>
+<td>处理程序调用的结果并最后确定响应。<br>1.ResponseEntityResultHandler：ResponseEntity，处理@Controller实例。<br>2.ServerResponseResultHandler：ServerResponse，处理函数式端点。<br>3.ResponseBodyResultHandler：处理从@ResponseBody方法和@RestController类的返回值。<br>4.ViewResolutionResultHandler：处理成CharSequence,View, Model, Map, Rendering等其他的模型属性。</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">handle</span><span class="params">(ServerWebExchange exchange)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.handlerMappings == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> Mono.error(HANDLER_NOT_FOUND_EXCEPTION);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> Flux.fromIterable(<span class="keyword">this</span>.handlerMappings)</span><br><span class="line">			.concatMap(mapping -&gt; mapping.getHandler(exchange))</span><br><span class="line">			.next()</span><br><span class="line">			.switchIfEmpty(Mono.error(HANDLER_NOT_FOUND_EXCEPTION))</span><br><span class="line">			.flatMap(handler -&gt; invokeHandler(exchange, handler))</span><br><span class="line">			.flatMap(result -&gt; handleResult(exchange, result));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>核心方法主要做了三个步骤：</p>
+<ol>
+<li>匹配每一个不同HandlerMapping，使用首先匹配的那个。</li>
+<li>执行器被找到就会找到对应的HandlerAdapter,然后就会将返回结果返回到HandlerResult里。</li>
+<li>HandlerResult会给出一个合适的处理器去完成直接写到响应里面或者使用View来渲染的处理。</li>
+</ol>
+<h4 id="RoutePredicateHandlerMapping类"><a href="#RoutePredicateHandlerMapping类" class="headerlink" title="RoutePredicateHandlerMapping类"></a>RoutePredicateHandlerMapping类</h4><p>刚说完DispatchHandler的类，就到HandlerMapping了，类RoutePredicateHandlerMapping实现了HandlerMapping。</p>
+<p>其核心私有字段分别有：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> FilteringWebHandler webHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> RouteLocator routeLocator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Integer managmentPort;</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>Bean类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>webHandler</td>
+<td>构建过滤器的责任链</td>
+</tr>
+<tr>
+<td>routeLocator</td>
+<td>路由的定义信息</td>
+</tr>
+<tr>
+<td>managmentPort</td>
+<td>gateway管理端口</td>
+</tr>
+</tbody>
+</table>
+<p>其核心方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> Mono&lt;?&gt; getHandlerInternal(ServerWebExchange exchange) &#123;</span><br><span class="line">	<span class="comment">// don't handle requests on the management port if set</span></span><br><span class="line">	<span class="keyword">if</span> (managmentPort != <span class="keyword">null</span> &amp;&amp; exchange.getRequest().getURI().getPort() == managmentPort.intValue()) &#123;</span><br><span class="line">		<span class="keyword">return</span> Mono.empty();</span><br><span class="line">	&#125;</span><br><span class="line">	exchange.getAttributes().put(GATEWAY_HANDLER_MAPPER_ATTR, getSimpleName());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> lookupRoute(exchange)</span><br><span class="line">			<span class="comment">// .log("route-predicate-handler-mapping", Level.FINER) //name this</span></span><br><span class="line">			.flatMap((Function&lt;Route, Mono&lt;?&gt;&gt;) r -&gt; &#123;</span><br><span class="line">				exchange.getAttributes().remove(GATEWAY_PREDICATE_ROUTE_ATTR);</span><br><span class="line">				<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">					logger.debug(<span class="string">"Mapping ["</span> + getExchangeDesc(exchange) + <span class="string">"] to "</span> + r);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				exchange.getAttributes().put(GATEWAY_ROUTE_ATTR, r);</span><br><span class="line">				<span class="keyword">return</span> Mono.just(webHandler);</span><br><span class="line">			&#125;).switchIfEmpty(Mono.empty().then(Mono.fromRunnable(() -&gt; &#123;</span><br><span class="line">				exchange.getAttributes().remove(GATEWAY_PREDICATE_ROUTE_ATTR);</span><br><span class="line">				<span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</span><br><span class="line">					logger.trace(<span class="string">"No RouteDefinition found for ["</span> + getExchangeDesc(exchange) + <span class="string">"]"</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该核心方法做了几件事：</p>
+<ol>
+<li>找到合适的路由lookupRoute方法。</li>
+<li>将路由信息放到ServerWebExchange请求线程的属性里，以便整个运行随时可用。</li>
+<li>执行webHandler中的过滤器链。==（后面会介绍如何执行）==</li>
+</ol>
+<p>lookupRoute执行过程：</p>
+<ol>
+<li>通过routeLocator的获取所有配置好的路由信息。 ==（后面会介绍如何加载路由信息、过滤器、断言）==</li>
+<li>匹配每一个路由的断言，是否符合，若符合则返回对应的路由信息。若不符合则next()下一个路由的断言匹配。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Mono&lt;Route&gt; <span class="title">lookupRoute</span><span class="params">(ServerWebExchange exchange)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span>.routeLocator</span><br><span class="line">			.getRoutes()</span><br><span class="line">			<span class="comment">//individually filter routes so that filterWhen error delaying is not a problem</span></span><br><span class="line">			.concatMap(route -&gt; Mono</span><br><span class="line">					.just(route)</span><br><span class="line">					.filterWhen(r -&gt; &#123;</span><br><span class="line">						<span class="comment">// add the current route we are testing</span></span><br><span class="line">						exchange.getAttributes().put(GATEWAY_PREDICATE_ROUTE_ATTR, r.getId());</span><br><span class="line">						<span class="keyword">return</span> r.getPredicate().apply(exchange);</span><br><span class="line">					&#125;)</span><br><span class="line">					<span class="comment">//instead of immediately stopping main flux due to error, log and swallow it</span></span><br><span class="line">					.doOnError(e -&gt; logger.error(<span class="string">"Error applying predicate for route: "</span>+route.getId(), e))</span><br><span class="line">					.onErrorResume(e -&gt; Mono.empty())</span><br><span class="line">			)</span><br><span class="line">			<span class="comment">// .defaultIfEmpty() put a static Route not found</span></span><br><span class="line">			<span class="comment">// or .switchIfEmpty()</span></span><br><span class="line">			<span class="comment">// .switchIfEmpty(Mono.&lt;Route&gt;empty().log("noroute"))</span></span><br><span class="line">			.next()</span><br><span class="line">			<span class="comment">//<span class="doctag">TODO:</span> error handling</span></span><br><span class="line">			.map(route -&gt; &#123;</span><br><span class="line">				<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">					logger.debug(<span class="string">"Route matched: "</span> + route.getId());</span><br><span class="line">				&#125;</span><br><span class="line">				validateRoute(route, exchange);</span><br><span class="line">				<span class="keyword">return</span> route;</span><br><span class="line">			&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="问题二：如何执行Filter"><a href="#问题二：如何执行Filter" class="headerlink" title="问题二：如何执行Filter"></a>问题二：如何执行Filter</h3><h4 id="如何执行Filter-FilteringWebHandler类"><a href="#如何执行Filter-FilteringWebHandler类" class="headerlink" title="如何执行Filter(FilteringWebHandler类)"></a>如何执行Filter(FilteringWebHandler类)</h4><p>执行流程：</p>
+<ol>
+<li>初始化时候构造好全局的过滤器集合。</li>
+<li>合并路由上配置的过滤器与全局过滤器</li>
+<li>排序好所有过滤器传入DefaultGatewayFilterChain的责任链里执行。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Mono&lt;Void&gt; handle(ServerWebExchange exchange) &#123;</span><br><span class="line">	Route route = exchange.getRequiredAttribute(GATEWAY_ROUTE_ATTR);</span><br><span class="line">	List&lt;GatewayFilter&gt; gatewayFilters = route.getFilters();</span><br><span class="line"></span><br><span class="line">	List&lt;GatewayFilter&gt; combined = new ArrayList&lt;&gt;(this.globalFilters);</span><br><span class="line">	combined.addAll(gatewayFilters);</span><br><span class="line">	//TODO: needed or cached?</span><br><span class="line">	AnnotationAwareOrderComparator.sort(combined);</span><br><span class="line"></span><br><span class="line">	if (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(&quot;Sorted gatewayFilterFactories: &quot;+ combined);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return new DefaultGatewayFilterChain(combined).filter(exchange);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>责任链是一个常用的编程设计模式，它能够将请求与处理步骤解耦，请求操作对链内部的执行透明，而且每个链子都有自己具体实现，能够自由组装复用，不相互影响，使得代码更加简洁。不过责任联在调试方面相对来说比较麻烦，不便于观察等缺点。</p>
+<p>看下如何构造一个责任联，内部类DefaultGatewayFilterChain<br>的filter方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultGatewayFilterChain</span> <span class="keyword">implements</span> <span class="title">GatewayFilterChain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> index;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">final</span> List&lt;GatewayFilter&gt; filters;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">DefaultGatewayFilterChain</span><span class="params">(List&lt;GatewayFilter&gt; filters)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.filters = filters;</span><br><span class="line">			<span class="keyword">this</span>.index = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">private</span> <span class="title">DefaultGatewayFilterChain</span><span class="params">(DefaultGatewayFilterChain parent, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.filters = parent.getFilters();</span><br><span class="line">			<span class="keyword">this</span>.index = index;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> List&lt;GatewayFilter&gt; <span class="title">getFilters</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> filters;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> Mono.defer(() -&gt; &#123;</span><br><span class="line">				<span class="keyword">if</span> (<span class="keyword">this</span>.index &lt; filters.size()) &#123;</span><br><span class="line">					GatewayFilter filter = filters.get(<span class="keyword">this</span>.index);</span><br><span class="line">					DefaultGatewayFilterChain chain = <span class="keyword">new</span> DefaultGatewayFilterChain(<span class="keyword">this</span>, <span class="keyword">this</span>.index + <span class="number">1</span>);</span><br><span class="line">					<span class="keyword">return</span> filter.filter(exchange, chain);</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					<span class="keyword">return</span> Mono.empty(); <span class="comment">// complete</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="问题三：如何加载路由、过滤器、断言等信息"><a href="#问题三：如何加载路由、过滤器、断言等信息" class="headerlink" title="问题三：如何加载路由、过滤器、断言等信息"></a>问题三：如何加载路由、过滤器、断言等信息</h3><h4 id="RouteDefinitionRouteLocator类"><a href="#RouteDefinitionRouteLocator类" class="headerlink" title="RouteDefinitionRouteLocator类"></a>RouteDefinitionRouteLocator类</h4><ul>
+<li>获取路由信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Flux&lt;Route&gt; getRoutes() &#123;</span><br><span class="line">	return this.routeDefinitionLocator.getRouteDefinitions()</span><br><span class="line">			.map(this::convertToRoute)</span><br><span class="line">			//TODO: error handling</span><br><span class="line">			.map(route -&gt; &#123;</span><br><span class="line">				if (logger.isDebugEnabled()) &#123;</span><br><span class="line">					logger.debug(&quot;RouteDefinition matched: &quot; + route.getId());</span><br><span class="line">				&#125;</span><br><span class="line">				return route;</span><br><span class="line">			&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	/* TODO: trace logging</span><br><span class="line">		if (logger.isTraceEnabled()) &#123;</span><br><span class="line">			logger.trace(&quot;RouteDefinition did not match: &quot; + routeDefinition.getId());</span><br><span class="line">		&#125;*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>==this.routeDefinitionLocator.getRouteDefinitions()== 初始化首次加载获取配置文件中定义的路由信息并存于缓存中以便下次使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public CachingRouteDefinitionLocator(RouteDefinitionLocator delegate) &#123;</span><br><span class="line">		this.delegate = delegate;</span><br><span class="line">		routeDefinitions = CacheFlux.lookup(cache, &quot;routeDefs&quot;, RouteDefinition.class)</span><br><span class="line">				.onCacheMissResume(this.delegate::getRouteDefinitions);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>==convertToRoute==则是将配置信息定义的路由信息转变为真正内部使用的路由实体，具体实现如下：</p>
+<ol>
+<li>组装断言链表</li>
+<li>获取配置信息定义过滤器</li>
+<li>组装成真正路由对象Route<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private Route convertToRoute(RouteDefinition routeDefinition) &#123;</span><br><span class="line">		AsyncPredicate&lt;ServerWebExchange&gt; predicate = combinePredicates(routeDefinition);</span><br><span class="line">		List&lt;GatewayFilter&gt; gatewayFilters = getFilters(routeDefinition);</span><br><span class="line"></span><br><span class="line">		return Route.async(routeDefinition)</span><br><span class="line">				.asyncPredicate(predicate)</span><br><span class="line">				.replaceFilters(gatewayFilters)</span><br><span class="line">				.build();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>其实这段代码使用了一个设计模式就是建造者模式。该模式能将构建和实现分离开来，建造者能逐步细化而不影响其它模块功能。不过建造者对产品会依赖，当产品发生变化，建造者相应也需要改变。所以这种模式建议用在比较简化的建造者依赖类上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">return Route.async(routeDefinition)</span><br><span class="line">				.asyncPredicate(predicate)</span><br><span class="line">				.replaceFilters(gatewayFilters)</span><br><span class="line">				.build();</span><br></pre></td></tr></table></figure>
+<p><img src="/images/video/Router的结构图.png" alt="建造者模式"></p>
+<p>“断言”的功能在我看来实现得是非常巧妙的，所有断言正如过滤器一样都有一个共同的父类AbstractRoutePredicateFactory，实现apply的方法。看个例子：</p>
+<p>PathRoutePredicateFactory断言类：作用是匹配请求uri资源。可以看出返回的是一个Predicate的实例，这样的好处就是在下次执行只会执行return返回的这一部分代码功能，不再需要执行配置行的代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Predicate&lt;ServerWebExchange&gt; apply(Config config) &#123;</span><br><span class="line">	final ArrayList&lt;PathPattern&gt; pathPatterns = new ArrayList&lt;&gt;();</span><br><span class="line">	synchronized (this.pathPatternParser) &#123;</span><br><span class="line">		pathPatternParser.setMatchOptionalTrailingSeparator(config.isMatchOptionalTrailingSeparator());</span><br><span class="line">		config.getPatterns().forEach(pattern -&gt; &#123;</span><br><span class="line">			PathPattern pathPattern = this.pathPatternParser.parse(pattern);</span><br><span class="line">			pathPatterns.add(pathPattern);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	return exchange -&gt; &#123;</span><br><span class="line">		PathContainer path = parsePath(exchange.getRequest().getURI().getPath());</span><br><span class="line"></span><br><span class="line">		Optional&lt;PathPattern&gt; optionalPathPattern = pathPatterns.stream()</span><br><span class="line">				.filter(pattern -&gt; pattern.matches(path))</span><br><span class="line">				.findFirst();</span><br><span class="line"></span><br><span class="line">		if (optionalPathPattern.isPresent()) &#123;</span><br><span class="line">			PathPattern pathPattern = optionalPathPattern.get();</span><br><span class="line">			traceMatch(&quot;Pattern&quot;, pathPattern.getPatternString(), path, true);</span><br><span class="line">			PathMatchInfo pathMatchInfo = pathPattern.matchAndExtract(path);</span><br><span class="line">			putUriTemplateVariables(exchange, pathMatchInfo.getUriVariables());</span><br><span class="line">			return true;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			traceMatch(&quot;Pattern&quot;, config.getPatterns(), path, false);</span><br><span class="line">			return false;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后通过Flux.zip方法连成一条断言链子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private AsyncPredicate&lt;ServerWebExchange&gt; combinePredicates(RouteDefinition routeDefinition) &#123;</span><br><span class="line">	List&lt;PredicateDefinition&gt; predicates = routeDefinition.getPredicates();</span><br><span class="line">	AsyncPredicate&lt;ServerWebExchange&gt; predicate = lookup(routeDefinition, predicates.get(0));</span><br><span class="line"></span><br><span class="line">	for (PredicateDefinition andPredicate : predicates.subList(1, predicates.size())) &#123;</span><br><span class="line">		AsyncPredicate&lt;ServerWebExchange&gt; found = lookup(routeDefinition, andPredicate);</span><br><span class="line">		predicate = predicate.and(found);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return predicate;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">---------------------------------------------------</span><br><span class="line"></span><br><span class="line">default AsyncPredicate&lt;T&gt; and(AsyncPredicate&lt;? super T&gt; other) &#123;</span><br><span class="line">	Objects.requireNonNull(other, &quot;other must not be null&quot;);</span><br><span class="line"></span><br><span class="line">	return t -&gt; Flux.zip(apply(t), other.apply(t))</span><br><span class="line">			.map(tuple -&gt; tuple.getT1() &amp;&amp; tuple.getT2());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实到这里这一章就差不多了，基本上Gateway的主要总体框架功能就这些。这一次的阅读源码能够使我对lambda表达式的用处更深刻，而且，对这种响应式流的理解更进一步了，后续还会持续学习关于netty reactor的用法。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/25/frp穿透/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/07/25/frp穿透/" itemprop="url">frp穿透</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-25T11:16:39+08:00">
+                2021-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/视频/" itemprop="url" rel="index">
+                    <span itemprop="name">视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="frp穿透"><a href="#frp穿透" class="headerlink" title="frp穿透"></a>frp穿透</h1><p>主要介绍如何将内网摄像头的rtsp通过frp穿透工具映射到互联网上。</p>
+<p>准备：</p>
+<p>摄像头ip：172.16.10.2</p>
+<p>内网服务器：10.144.21.90（与摄像头是互通）</p>
+<p>互联网服务器：47.106.89.193</p>
+<p>frp工具包：frp_0.35.1_linux_386.tar.gz</p>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><ol>
+<li><p>两台分别安装frp穿透工具</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/fatedier/frp/releases/download/v0.35.1/frp_0.35.1_linux_386.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置服务端</p>
+</li>
+</ol>
+<p>互联网服务器47.106.89.193作为服务端,配置frps.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000    #绑定端口</span><br><span class="line"></span><br><span class="line">[rtsp]</span><br><span class="line">listen_port = 10000 #监听端口</span><br></pre></td></tr></table></figure>
+<p>开启服务端监听命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup ./frps -c ./frps.ini &amp;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>配置客户端</li>
+</ol>
+<p>内网服务器10.144.21.90作为客户端,配置frpc.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 47.106.89.193 #服务端ip</span><br><span class="line">server_port = 7000  #服务端绑定的端口</span><br><span class="line"></span><br><span class="line">#[ssh]</span><br><span class="line">#type = tcp</span><br><span class="line">#local_ip = 127.0.0.1</span><br><span class="line">#local_port = 22</span><br><span class="line">#remote_port = 6000</span><br><span class="line"></span><br><span class="line">[rtsp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 172.16.10.2  #摄像头Ip</span><br><span class="line">local_port = 554    #摄像头端口</span><br><span class="line">remote_port = 10000 #服务端监听得端口</span><br></pre></td></tr></table></figure>
+<p>开启服务端监听命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup ./frpc -c ./frpc.ini &amp;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>结果</li>
+</ol>
+<p>rtsp://admin:a12345678@47.106.89.193:10000/h264/ch33/main/av_stream</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.cnblogs.com/liusingbon/p/12623774.html" target="_blank" rel="noopener">frp映射摄像头地址及端口</a></p>
+<p><a href="https://www.oschina.net/p/frp?hmsr=aladdin1e1" target="_blank" rel="noopener">frp 内网穿透工具</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/25/FFmpeg学习与使用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jay-Luo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jay-Luo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2021/07/25/FFmpeg学习与使用/" itemprop="url">FFmpeg学习与使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-25T11:16:39+08:00">
+                2021-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/视频/" itemprop="url" rel="index">
+                    <span itemprop="name">视频</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h2><p>本节主要记录下FFmpeg的使用方法以及如何用于视频项目上作一个简单的介绍</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>FFmpeg是一款多媒体处理工具，内部包含了解码、编码、转码、解密的操作命令。正式由于FFmpeg太强大，目前大部分流媒体服务都会或多或小使用到FFmpeg的功能，所以我们有必要学习下FFmpeg的使用指令。</p>
+<h2 id="常用命令以及解析"><a href="#常用命令以及解析" class="headerlink" title="常用命令以及解析"></a>常用命令以及解析</h2><h3 id="主要成分："><a href="#主要成分：" class="headerlink" title="主要成分："></a>主要成分：</h3><ol>
+<li>libavformat：用于各种音视频封装格式的生成和解析，包括获取解码所需信息以生成解码上下文结构和读取音视频帧等功能；</li>
+<li>libavcodec：用于各种类型声音/图像编解码；</li>
+<li>libavutil：包含一些公共的工具函数；</li>
+<li>libswscale：用于视频场景比例缩放、色彩映射转换；</li>
+<li>libpostproc：用于后期效果处理；</li>
+<li>ffmpeg：该项目提供的一个工具，可用于格式转换、解码或电视卡即时编码等；</li>
+<li>ffsever：一个 HTTP 多媒体即时广播串流服务器；</li>
+<li>ffplay：是一个简单的播放器，使用ffmpeg 库解析和解码，通过SDL显示；</li>
+</ol>
+<h3 id="ffprobe"><a href="#ffprobe" class="headerlink" title="ffprobe"></a>ffprobe</h3><p>例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffprobe -rtsp_transport tcp -i &quot;rtsp://10.128.184.34:554/01?Short=1&amp;Token=vEKOlIYbbCFseXHTjO3kbtEKZGZ4eyRExIkPU+yWWPA=&amp;DomainCode=6a7c1a077a004406a344a1f260d86e41&amp;UserId=6&amp;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>-rtsp_transport tcp/udp：选择以TCP还是UDP方式打开<br>·-i filename：指定输入文件名，rtsp、rtmp、摄像头地址等。<br>-show_format filename：展示格式<br>-show_frames filename：显示帧信息</p>
+<h3 id="ffplay"><a href="#ffplay" class="headerlink" title="ffplay"></a>ffplay</h3><p>播放文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffplay xxx.mp3 -ast 1 -loop 10</span><br></pre></td></tr></table></figure></p>
+<p>-loop num：循环次数</p>
+<p>-[ast|vst] 1：选择播放[音频|视频]</p>
+<h3 id="FFmpeg"><a href="#FFmpeg" class="headerlink" title="FFmpeg"></a>FFmpeg</h3><p>FFmpeg参数太多，以下是我举例了项目中实际用到的命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -re -loglevel quiet &#123;[decoder]&#125;  &#123;[tcp]&#125; -i &quot;&#123;[rtsp]&#125;&quot;</span><br></pre></td></tr></table></figure>
+<p>·-re：代表按照帧率发送，尤其在作为推流工具的时候一定要加入该参数，否则ffmpeg会按照最高速率向流媒体服务器不停地发送数据</p>
+<p>-loglevel [debug|quiet|error]：日志级别记录</p>
+<p>·-i filename：指定输入文件名，rtsp、rtmp、摄像头地址等。</p>
+<p>截图<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg  -re -loglevel quiet &#123;[tcp]&#125; -i \&quot;&#123;[rtsp]&#125;\&quot; -an &#123;[size]&#125;  -vframes 1 -y -f image2 &#123;[pattern]&#125;.jpg</span><br></pre></td></tr></table></figure></p>
+<p>-an：视频静音</p>
+<p>·-y：覆盖已有文件。</p>
+<p>·-f fmt：指定格式（音频或者视频格式）。</p>
+<p>推流转码成h264<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -re -loglevel debug  -rtsp_transport tcp -i &quot;rtsp://10.128.184.34:554/01?Short=1&amp;Token=yWSkzfBj71Yja67n9Y65SXDN97TCCOzBveNwOB53Lh8=&amp;DomainCode=6a7c1a077a004406a344a1f260d86e41&amp;UserId=6&amp;&quot; -an -s 1280x720  -vcodec smart_h264 -f flv rtmp://192.168.193.168:1935/hls/7a92e703d492aac22614ba670c85018f?secret=035c73f7-bb6b-4889-a715-d9eb2d1925ccSimp</span><br></pre></td></tr></table></figure></p>
+<p>-analyzeduration：设置码流分析时间</p>
+<p>-probesize：探测时长，这个设置的时间越长，视频打开得越慢</p>
+<p>·-vcodec [codec|smart_h264]：强制使用codec编解码方式（’copy’代表不进行重新编码）,smart_h264实现h264编码</p>
+<p>·-s size：指定分辨率（320×240）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;[ffmpeg]&#125; -loglevel error &#123;[decoder]&#125; -i &#123;[rtsp]&#125; &#123;[copy]&#125; &#123;[encoder]&#125; -an -threads 10 -tune zerolatency -crf &#123;[crf]&#125; -g 1 -r &#123;[frameRate]&#125; -preset ultrafast -vcodec smart_h264 -f flv rtmp://192.168.193.168:1935/hls/7a92e703d492aac22614ba670c85018f?secret=035c73f7-bb6b-4889-a715-d9eb2d1925ccSimp</span><br></pre></td></tr></table></figure>
+<p>crf num：<br>为恒定质量（无比特率目标）和受限质量（最大比特率目标）模式设置质量/大小折衷。有效范围是0到63，数字越大表示质量越低，输出大小越小。仅在设置时使用；默认情况下，仅使用比特率目标</p>
+<p>threads num：选定的编解码器实现支持多线程，则设置要使用的线程数。</p>
+<p>tune [zerolatency|fastdecode|psnr|ssim]：主要配合视频类型和视觉优化的参数。zerolatency零延迟，用在需要非常低的延迟的情况下，比如电视电话会议的编码；fastdecode可以快速解码的参数； psnr为提高psnr做了优化的参数；ssim为提高ssim做了优化的参数； </p>
+<p>preset type：预设类型。</p>
+<p>r num：帧率</p>
+<p>g size：设置GOP的大小</p>
+<h2 id="项目中如何是使用"><a href="#项目中如何是使用" class="headerlink" title="项目中如何是使用"></a>项目中如何是使用</h2><p>由于ffmpeg太强大，在视频网关的项目中，我们经常会使用到ffmpeg。主要使用到有两方面，一个是截图，一个是将h265的视频数据格式转码成h264或者更改视频的分辨率功能等。为什么在项目中会使用到FFmpeg呢，其实像海康和大华第三方的厂商都会有对应的sdk,但是像截图之类的功能不能很好支持各种分辨率的截图，所以喔们考虑到使用FFmpeg来结合起来，以下是关于项目的流程图。</p>
+<p><img src="/images/video/流程图.jpg" alt="FFmpeg使用流程"></p>
+<p>其实在项目上，我们一般会使用FFmpeg来进行截图，如上述说因为能够定制化配置截图得大小以及色差得调节等，而第三方厂商sdk一般都是默认尺寸，扩展性不高（如海康和大华）。而且，使用FFmpeg得扩展性会比较高。但是FFmpeg并不是万能，对于有一些私有的RTSP等可能也会存在失败的情况，所以在项目中如果FFmpeg截图不成功都会采用对应厂商sdk进行兜底截图，保证图片能够生成并且可用。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://www.ffmpeg.org/documentation.html" target="_blank" rel="noopener">FFmpeg官网</a></li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/24/wireshark抓包并使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1416,608 +2255,11 @@ step4->step5->step6->e</textarea><textarea id="flowchart-0-options" style="displ
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/21/kettle-8.2安装手册/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jay-Luo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jay-Luo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/21/kettle-8.2安装手册/" itemprop="url">kettle-8.2安装手册</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-21T12:00:00+08:00">
-                2017-08-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/大数据/" itemprop="url" rel="index">
-                    <span itemprop="name">大数据</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1 简介"></a>1 简介</h1><p>本编文章主要介绍如何安装kettle 8.2</p>
-<h1 id="2-准备"><a href="#2-准备" class="headerlink" title="2 准备"></a>2 准备</h1><p>  1) 安装jdk1.8(已在上一章说明)<br>  2) 下载kettle 8.2安装包：<em><a href="https://sourceforge.net/projects/pentaho/files/latest/download?aliId=137249511" target="_blank" rel="noopener">https://sourceforge.net/projects/pentaho/files/latest/download?aliId=137249511</a></em></p>
-<h1 id="3-安装kettle-8-2"><a href="#3-安装kettle-8-2" class="headerlink" title="3 安装kettle 8.2"></a>3 安装kettle 8.2</h1><p>  1) 解压下载的安装包<br>  2) 进入目录pdi-ce-8.2.0.0-342 <strong>-&gt;</strong> data-integration <strong>-&gt;</strong> ,打开spoon.bat<br><img src="/images/bdata/kettl-pc启动器.png" alt="spoon-bat"><br>  3) 出现以上页面，代表安装成功<br><img src="/images/bdata/kettle-pc界面.png" alt="success-page"></p>
-<h1 id="4-如何运行kettle脚本程序"><a href="#4-如何运行kettle脚本程序" class="headerlink" title="4 如何运行kettle脚本程序"></a>4 如何运行kettle脚本程序</h1><p>  1) 下载kettle脚本程序.zip,并重命名成后缀为zip压缩包：<em><a href="http://192.168.2.45:1174/AAYQAf__AAAAAQAAAAAAAAAAyUKMcgAORL6xOFABvf-aoA" target="_blank" rel="noopener">http://192.168.2.45:1174/AAYQAf__AAAAAQAAAAAAAAAAyUKMcgAORL6xOFABvf-aoA</a></em><br>  2) 解压压缩包，获取rest2file.ktr脚本程序<br>  3) 点击打开按钮并选择存放脚本的指定位置<br><img src="/images/bdata/kettle打开界面.png" alt="open"><br>  4) 执行脚本，并看当前脚本返回结果<br><img src="/images/bdata/kettle执行按钮.png" alt="perform"></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/23/git常用指令记录/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jay-Luo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jay-Luo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/02/23/git常用指令记录/" itemprop="url">git指令用法</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-23T11:16:39+08:00">
-                2017-02-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git总结/" itemprop="url" rel="index">
-                    <span itemprop="name">git总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="常用git命令的使用"><a href="#常用git命令的使用" class="headerlink" title="常用git命令的使用"></a>常用git命令的使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">git init 初始化当前文件夹</span><br><span class="line">#分支</span><br><span class="line">git branch -r 查看已有的分支</span><br><span class="line">git checkout -b 分支 创建并切换分支</span><br><span class="line">git checkout 分支 切换分支</span><br><span class="line">git branch 显示当前分支</span><br><span class="line">git branch -d 分支 删除分支</span><br><span class="line">#提交</span><br><span class="line">git add . 添加操作，将将所有修改过的文件添加到版本库的暂缓区内</span><br><span class="line">git commit -m &quot;文字说明&quot; 提交操作，将暂缓区内的代码提交到本地仓库中</span><br><span class="line">git push origin 分支 push到远程仓库中</span><br><span class="line">#版本回退</span><br><span class="line">git reset HEAD^ 回退到上一个版本</span><br><span class="line">git reset --hard commit_id 回退到指定的commit_id的版本中</span><br><span class="line">#添加远程仓库</span><br><span class="line">git remote add origin git@github.com:245831311(github账号名)/245831311.github.io.git(github仓库名)  添加远程仓库</span><br><span class="line">git remote -v 查看origin远程主机名对应远程仓库</span><br><span class="line">git remote rm origin 删除远程仓库</span><br><span class="line">#查看配置</span><br><span class="line">git config -l 查看</span><br><span class="line">#查看git状态</span><br><span class="line">git status</span><br><span class="line">#拉取代码</span><br><span class="line">git fetch 将远程分支上的代码拉取下来并不合并</span><br><span class="line">git rebase</span><br><span class="line">git merge 合并代码</span><br><span class="line">git pull 拉取并与当前分支合并代码</span><br></pre></td></tr></table></figure>
-<h3 id="重点记录"><a href="#重点记录" class="headerlink" title="重点记录"></a>重点记录</h3><h4 id="1-git-push-lt-远程主机名-gt-lt-本地分支名-gt-lt-远程分支名-gt"><a href="#1-git-push-lt-远程主机名-gt-lt-本地分支名-gt-lt-远程分支名-gt" class="headerlink" title="1.git push &lt;远程主机名&gt; &lt;本地分支名&gt;  &lt;远程分支名&gt;"></a>1.git push &lt;远程主机名&gt; &lt;本地分支名&gt;  &lt;远程分支名&gt;</h4><p><strong>1.1 git push origin</strong><br> 省略了本地分支与远程分支，当前分支与上一次的远程分支存在对应的关系，则会通过这个关系推送出去<br><strong>1.2 git push origin master</strong><br> 省略了远程分支名，则本地分支会推送到上一次对应存在的远程分支关系(一般同名).不存在则创建新的远程分支<br><strong>1.3 git push origin :refs/for/master</strong><br> 省略了本地分支名，则相当与删除远程分支<br><strong>1.4 git push -u origin master</strong><br>-u可以将本地分支与远程分支建立一个upstream的关系，若使用，则本地分支与远程分支建立了对应关系</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/22/hexo用法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jay-Luo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jay-Luo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/02/22/hexo用法/" itemprop="url">hexo的搭建与使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-22T12:00:00+08:00">
-                2017-02-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/hexo总结/" itemprop="url" rel="index">
-                    <span itemprop="name">hexo总结</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Hexo-是什么"><a href="#Hexo-是什么" class="headerlink" title="Hexo 是什么"></a>Hexo 是什么</h3><pre><code>hexo是基于node.js的一个简洁的博客框架。hexo是一款使用markdown渲染，快速生成静态页面的框架。
-</code></pre><h3 id="为什么使用hexo作为博客"><a href="#为什么使用hexo作为博客" class="headerlink" title="为什么使用hexo作为博客"></a>为什么使用hexo作为博客</h3><ul>
-<li>不走数据库，可以通过md作为存储文件</li>
-<li>高效快速，生成和渲染静态页面快</li>
-<li>部署发布简单，操作简便</li>
-</ul>
-<h3 id="hexo部署"><a href="#hexo部署" class="headerlink" title="hexo部署"></a>hexo部署</h3><p>一. 安装node.js（网上很多，不详细解释）<br>安装完毕后可以输入node -v查看是否安装成功.</p>
-<p>二. 安装hexo<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#由于npm的源比较慢，建议先换成淘宝的镜像</span><br><span class="line">npm config set registry "https://registry.npm.taobao.org"</span><br><span class="line"></span><br><span class="line">#安装hexo客户端</span><br><span class="line">npm install hexo-cli g</span><br><span class="line"></span><br><span class="line">#安装服务端插件</span><br><span class="line">npm install hexo-server --save</span><br><span class="line"></span><br><span class="line">#安装hexo发布插件</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
-<h3 id="hexo相关语法"><a href="#hexo相关语法" class="headerlink" title="hexo相关语法"></a>hexo相关语法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.hexo init 文件夹 初始化文件夹为hexo目录形式</span><br><span class="line">2.hexo server(hexo s) 开启服务端,默认4000</span><br><span class="line">3.hexo s -p 5000 开启服务端并设置端口号</span><br><span class="line">4.hexo generate(hexo g) 生成静态页面</span><br><span class="line">5.hexo clean 清空静态页面</span><br><span class="line">6.hexo deploy 发布</span><br><span class="line">7.hexo g -d 生成并发布</span><br><span class="line">8.hexo g -s 生成并开启服务</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/22/使用Sublime3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jay-Luo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Jay-Luo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/01/22/使用Sublime3/" itemprop="url">st3使用配置</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-22T11:16:39+08:00">
-                2017-01-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/sublime3使用笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">sublime3使用笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h2 id="该编文章主要是记录下使用ST3和在ST3编辑markdown"><a href="#该编文章主要是记录下使用ST3和在ST3编辑markdown" class="headerlink" title="该编文章主要是记录下使用ST3和在ST3编辑markdown"></a>该编文章主要是记录下使用ST3和在ST3编辑markdown</h2><h3 id="1-安装ST3"><a href="#1-安装ST3" class="headerlink" title="1. 安装ST3"></a>1. 安装ST3</h3><p>安装过程及其简单，直接go to anything 就可以了。</p>
-<h3 id="2-下载支持插件"><a href="#2-下载支持插件" class="headerlink" title="2. 下载支持插件"></a>2. 下载支持插件</h3><ol>
-<li>下载package control插件(网上一堆信息，不做详细说明)<br>主要参考：<a href="https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/" target="_blank" rel="noopener">https://www.cnblogs.com/luoshupeng/archive/2013/09/09/3310777.html/</a></li>
-<li><p>下载markdownEditing(编辑markdown,提供快捷键)<br><em>流程:ctrl+Shift+P-&gt;install package-&gt;下载markdownEditing插件-&gt;在multimarkdown setting user下设置</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">      &quot;enable_table_editor&quot;: true,</span><br><span class="line">      &quot;highlight_line&quot;: true,</span><br><span class="line">      &quot;line_numbers&quot;: true,   // 显示行号</span><br><span class="line">      &quot;tab_size&quot;: 4,          // tab宽度</span><br><span class="line">      &quot;wrap_width&quot;: 300,</span><br><span class="line">      &quot;word_wrap&quot;: true,      // 自动换行</span><br><span class="line">      &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor-Dark.tmTheme&quot;,</span><br><span class="line">      // &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor.tmTheme&quot;,</span><br><span class="line">      // &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor-Dark.tmTheme&quot;,</span><br><span class="line">      // &quot;color_scheme&quot;: &quot;Packages/MarkdownEditing/MarkdownEditor-Yellow.tmTheme&quot;,</span><br><span class="line">      &quot;mde.keep_centered&quot;: true,// 可以保持你正在编辑的行始终处于屏幕的中间</span><br><span class="line">      &quot;extensions&quot;:</span><br><span class="line">      [</span><br><span class="line">          &quot;mmd&quot;,</span><br><span class="line">          &quot;md&quot;</span><br><span class="line">      ]</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>下载Markdown Preview或MarkdownLivePreview.(预览markdown)<br><em>markdown preview下载流程:ctrl+Shift+P-&gt;install package-&gt;输入插件名称markdown preview-&gt;key bindings插入下面代码</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;keys&quot;: [&quot;alt+m&quot;], &quot;command&quot;: &quot;markdown_preview&quot;, &quot;args&quot;: &#123;&quot;target&quot;: &quot;browser&quot;, &quot;parser&quot;:&quot;markdown&quot;&#125; &#125;,</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="3-记录st3常用的快捷键"><a href="#3-记录st3常用的快捷键" class="headerlink" title="3. 记录st3常用的快捷键"></a>3. 记录st3常用的快捷键</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+← 向左单位性地移动光标，快速移动光标。</span><br><span class="line">Ctrl+→ 向右单位性地移动光标，快速移动光标。</span><br><span class="line">shift+↑ 向上选中行。</span><br><span class="line">shift+↓ 向下选中行。</span><br><span class="line">Ctrl+Shift+K 删除整行。</span><br><span class="line">Ctrl+/ 注释单行。</span><br><span class="line">Ctrl+Shift+/ 注释多行。</span><br><span class="line">Ctrl+K+U 转换大写。</span><br><span class="line">Ctrl+K+L 转换小写。</span><br><span class="line">Ctrl+F 打开底部搜索框，查找关键字。</span><br><span class="line">Ctrl+P 打开搜索框。提供：<span class="number">1</span>、输入当前项目中的文件名，快速搜索文件，<span class="number">2</span>、Ctrl+G功能，<span class="number">3</span>、Ctrl+R功能，<span class="number">4</span>、Ctrl+：功能</span><br><span class="line">Ctrl+G 自动带：，输入数字跳转到该行代码</span><br><span class="line">Ctrl+R 自动带@，查找文件中的函数名</span><br><span class="line">Ctrl+： 自动带#，查找文件中的变量名、属性名等</span><br><span class="line">Ctrl+Shift+P 打开命令框。场景栗子：打开命名框，输入关键字，调用sublime text或插件的功能，例如使用<span class="keyword">package</span>安装插件。</span><br><span class="line">Esc 退出搜索框，命令框等。</span><br><span class="line">Alt+Shift+<span class="number">1</span> 窗口分屏<span class="number">1</span>-<span class="number">4</span>(水平),<span class="number">5</span>（等分）,<span class="number">89</span>（垂直）</span><br><span class="line">Ctrl+K+B 开启/关闭侧边栏。</span><br></pre></td></tr></table></figure>
-<h3 id="4-markdownEditing常用的快捷键"><a href="#4-markdownEditing常用的快捷键" class="headerlink" title="4. markdownEditing常用的快捷键"></a>4. markdownEditing常用的快捷键</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+Win+V 选中的内容将自动转换为行内式超链接，链接到剪贴板中的内容</span><br><span class="line">Ctrl+Win+R 选中的内容将自动转换为参考式超链接，链接到剪贴板中的内容</span><br><span class="line">Ctrl+Alt+R 弹出提示框插入一个参考式超链接，在提示框中输入链接内容和定义参考ID[^<span class="number">3</span>]</span><br><span class="line">Ctrl+Win+K 插入一个标准的行内式超链接</span><br><span class="line">Win+Shift+K 插入一个标准的行内式图片（此快捷键可能与输入法有冲突）</span><br><span class="line">Ctrl+<span class="number">1</span> 至 Ctrl+<span class="number">6</span> 插入一级至六级标题</span><br><span class="line">FN+Alt+i 选中的内容转换为斜体</span><br><span class="line">FN+Alt+b 选中的内容转换为粗体[^<span class="number">1</span>]</span><br><span class="line">Ctrl+Shift+<span class="number">6</span> 自动插入一个脚注，并跳转到该脚注的定义中。</span><br><span class="line">Alt+Shift+F 查找没有定义的脚注并自动添加其定义链接</span><br><span class="line">Alt+Shift+G 查找没有定义的参考式超链接并自动添加其定义链接</span><br><span class="line">Ctrl+Alt+S 脚注排序</span><br><span class="line">Ctrl+Shift+. 缩进当前内容</span><br><span class="line">Ctrl+Shift+, 提前当前内容</span><br></pre></td></tr></table></figure>
-<p><strong>PS</strong> 参考:</p>
-<ol>
-<li>快捷键总结:<a href="http://blog.csdn.net/u012771929/article/details/30030249" target="_blank" rel="noopener">http://blog.csdn.net/u012771929/article/details/30030249</a></li>
-<li>st3使用配置:<a href="http://www.jianshu.com/p/62241c7ecec9" target="_blank" rel="noopener">http://www.jianshu.com/p/62241c7ecec9</a></li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2067,7 +2309,7 @@ step4->step5->step6->e</textarea><textarea id="flowchart-0-options" style="displ
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
