@@ -280,8 +280,95 @@
 <ol start="2">
 <li>方法定义</li>
 </ol>
-<p>方法 | 方向 | 对象 | 要求 | 含义<br>:-:|-|-|-|-|-<br>DESCRIBE | C-&gt;S | P，S | 推荐 | 检查演示或媒体对象的描述，也允许使用接收头指定用户理解的描述格式。DESCRIBE的答复-响应组成媒体RTSP初始阶段<br>ANNOUNCE | C-&gt;S,S-&gt;C | P，S | 可选 | 当从用户发往服务器时，ANNOUNCE将请求URL识别的演示或媒体对象描述发送给服务器；反之，ANNOUNCE实时更新连接描述。如新媒体流加入演示，整个演示描述再次发送，而不仅仅是附加组件，使组件能被删除<br>GET_PARAMETER | C-&gt;S,S-&gt;C | P，S | 可选 | GET_PARAMETER请求检查URL指定的演示与媒体的参数值。没有实体体时，GET_PARAMETER也许能用来测试用户与服务器的连通情况<br>OPTIONS | C-&gt;S,S-&gt;C | P，S | 要求 | 可在任意时刻发出OPTIONS请求，如用户打算尝试非标准请求，并不影响服务器状态<br>PAUSE | C-&gt;S | P，S | 推荐 | PAUSE请求引起流发送临时中断。如请求URL命名一个流，仅回放和记录被停止；如请求URL命名一个演示或流组，演示或组中所有当前活动的流发送都停止。恢复回放或记录后，必须维持同步。在SETUP消息中连接头超时参数所指定时段期间被暂停后，尽管服务器可能关闭连接并释放资源，但服务器资源会被预订<br>PLAY | C-&gt;S | P，S | 要求 | PLAY告诉服务器以SETUP指定的机制开始发送数据；直到一些SETUP请求被成功响应，客户端才可发布PLAY请求。PLAY请求将正常播放时间设置在所指定范围的起始处，发送流数据直到范围的结束处。PLAY请求可排成队列，服务器将PLAY请求排成队列，顺序执行<br>RECORD | C-&gt;S | P，S | 可选 | 该方法根据演示描述初始化媒体数据记录范围，时标反映开始和结束时间；如没有给出时间范围，使用演示描述提供的开始和结束时间。如连接已经启动，立即开始记录，服务器数据请求URL或其他URL决定是否存储记录的数据；如服务器没有使用URL请求，响应应为201（创建），并包含描述请求状态和参考新资源的实体与位置头。支持现场演示记录的媒体服务器必须支持时钟范围格式，smpte格式没有意义<br>REDIRECT | S-&gt;C | P，S | 可选 | 重定向请求通知客户端连接到另一服务器地址。它包含强制头地址，指示客户端发布URL请求；也可能包括参数范围，以指明重定向何时生效。若客户端要继续发送或接收URL媒体，客户端必须对当前连接发送TEARDOWN请求，而对指定主执新连接发送SETUP请求<br>SETUP | C-&gt;S | S | 要求 | 对URL的SETUP请求指定用于流媒体的传输机制。客户端对正播放的流发布一个SETUP请求，以改变服务器允许的传输参数。如不允许这样做，响应错误为”455 Method Not Valid In This State”。为了透过防火墙，客户端必须指明传输参数，即使对这些参数没有影响<br>SET_PARAMETER | C-&gt;S,S-&gt;C | P，S | 可选 | 这个方法请求设置演示或URL指定流的参数值。请求仅应包含单个参数，允许客户端决定某个特殊请求为何失败。如请求包含多个参数，所有参数可成功设置，服务器必须只对该请求起作用。服务器必须允许参数可重复设置成同一值，但不让改变参数值。注意：媒体流传输参数必须用SETUP命令设置。将设置传输参数限制为SETUP有利于防火墙。将参数划分成规则排列形式，结果有更多有意义的错误指示<br>TEARDOWN | C-&gt;S | S | 要求 | TEARDOWN请求停止给定URL流发送，释放相关资源。如URL是此演示URL，任何RTSP连接标识不再有效。除非全部传输参数是连接描述定义的，SETUP请求必须在连接可再次播放前发布</p>
-<ol start="3">
+<table>
+<thead>
+<tr>
+<th align="center">方法</th>
+<th>方向</th>
+<th>对象</th>
+<th>要求</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">DESCRIBE</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>推荐</td>
+<td>检查演示或媒体对象的描述，也允许使用接收头指定用户理解的描述格式。DESCRIBE的答复-响应组成媒体RTSP初始阶段</td>
+</tr>
+<tr>
+<td align="center">ANNOUNCE</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>当从用户发往服务器时，ANNOUNCE将请求URL识别的演示或媒体对象描述发送给服务器；反之，ANNOUNCE实时更新连接描述。如新媒体流加入演示，整个演示描述再次发送，而不仅仅是附加组件，使组件能被删除</td>
+</tr>
+<tr>
+<td align="center">GET_PARAMETER</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>GET_PARAMETER请求检查URL指定的演示与媒体的参数值。没有实体体时，GET_PARAMETER也许能用来测试用户与服务器的连通情况</td>
+</tr>
+<tr>
+<td align="center">OPTIONS</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>要求</td>
+<td>可在任意时刻发出OPTIONS请求，如用户打算尝试非标准请求，并不影响服务器状态</td>
+</tr>
+<tr>
+<td align="center">PAUSE</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>推荐</td>
+<td>PAUSE请求引起流发送临时中断。如请求URL命名一个流，仅回放和记录被停止；如请求URL命名一个演示或流组，演示或组中所有当前活动的流发送都停止。恢复回放或记录后，必须维持同步。在SETUP消息中连接头超时参数所指定时段期间被暂停后，尽管服务器可能关闭连接并释放资源，但服务器资源会被预订</td>
+</tr>
+<tr>
+<td align="center">PLAY</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>要求</td>
+<td>PLAY告诉服务器以SETUP指定的机制开始发送数据；直到一些SETUP请求被成功响应，客户端才可发布PLAY请求。PLAY请求将正常播放时间设置在所指定范围的起始处，发送流数据直到范围的结束处。PLAY请求可排成队列，服务器将PLAY请求排成队列，顺序执行</td>
+</tr>
+<tr>
+<td align="center">RECORD</td>
+<td>C-&gt;S</td>
+<td>P，S</td>
+<td>可选</td>
+<td>该方法根据演示描述初始化媒体数据记录范围，时标反映开始和结束时间；如没有给出时间范围，使用演示描述提供的开始和结束时间。如连接已经启动，立即开始记录，服务器数据请求URL或其他URL决定是否存储记录的数据；如服务器没有使用URL请求，响应应为201（创建），并包含描述请求状态和参考新资源的实体与位置头。支持现场演示记录的媒体服务器必须支持时钟范围格式，smpte格式没有意义</td>
+</tr>
+<tr>
+<td align="center">REDIRECT</td>
+<td>S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>重定向请求通知客户端连接到另一服务器地址。它包含强制头地址，指示客户端发布URL请求；也可能包括参数范围，以指明重定向何时生效。若客户端要继续发送或接收URL媒体，客户端必须对当前连接发送TEARDOWN请求，而对指定主执新连接发送SETUP请求</td>
+</tr>
+<tr>
+<td align="center">SETUP</td>
+<td>C-&gt;S</td>
+<td>S</td>
+<td>要求</td>
+<td>对URL的SETUP请求指定用于流媒体的传输机制。客户端对正播放的流发布一个SETUP请求，以改变服务器允许的传输参数。如不允许这样做，响应错误为”455 Method Not Valid In This State”。为了透过防火墙，客户端必须指明传输参数，即使对这些参数没有影响</td>
+</tr>
+<tr>
+<td align="center">SET_PARAMETER</td>
+<td>C-&gt;S,S-&gt;C</td>
+<td>P，S</td>
+<td>可选</td>
+<td>这个方法请求设置演示或URL指定流的参数值。请求仅应包含单个参数，允许客户端决定某个特殊请求为何失败。如请求包含多个参数，所有参数可成功设置，服务器必须只对该请求起作用。服务器必须允许参数可重复设置成同一值，但不让改变参数值。注意：媒体流传输参数必须用SETUP命令设置。将设置传输参数限制为SETUP有利于防火墙。将参数划分成规则排列形式，结果有更多有意义的错误指示</td>
+</tr>
+<tr>
+<td align="center">TEARDOWN</td>
+<td>C-&gt;S</td>
+<td>S</td>
+<td>要求</td>
+<td>TEARDOWN请求停止给定URL流发送，释放相关资源。如URL是此演示URL，任何RTSP连接标识不再有效。除非全部传输参数是连接描述定义的，SETUP请求必须在连接可再次播放前发布</td>
+</tr>
+</tbody></table>
+<ol>
 <li><p>交互流程</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">C表示RTSP客户端,S表示RTSP服务端</span><br><span class="line"></span><br><span class="line">1. 第一步：查询服务器端可用方法</span><br><span class="line">1.C-&gt;S:OPTION request //询问S有哪些方法可用</span><br><span class="line"></span><br><span class="line">1.S-&gt;C:OPTION response //S回应信息的public头字段中包括提供的所有可用方法</span><br><span class="line"></span><br><span class="line">2. 第二步：得到媒体描述信息</span><br><span class="line">2.C-&gt;S:DESCRIBE request //要求得到S提供的媒体描述信息</span><br><span class="line"></span><br><span class="line">2.S-&gt;C:DESCRIBE response //S回应媒体描述信息，一般是sdp信息</span><br><span class="line"></span><br><span class="line">3. 第三步：建立RTSP会话</span><br><span class="line">3.C-&gt;S:SETUP request //通过Transport头字段列出可接受的传输选项，请求S建立会话</span><br><span class="line"></span><br><span class="line">3.S-&gt;C:SETUP response //S建立会话，通过Transport头字段返回选择的具体转输选项，并返回建立的Session ID;</span><br><span class="line"></span><br><span class="line">4. 第四步：请求开始传送数据</span><br><span class="line">4.C-&gt;S:PLAY request //C请求S开始发送数据</span><br><span class="line"></span><br><span class="line">4.S-&gt;C:PLAY response //S回应该请求的信息</span><br><span class="line"></span><br><span class="line">5. 第五步： 数据传送播放中</span><br><span class="line">S-&gt;C:发送流媒体数据 // 通过RTP协议传送数据</span><br><span class="line"></span><br><span class="line">6. 第六步：关闭会话，退出</span><br><span class="line">6.C-&gt;S:TEARDOWN request //C请求关闭会话</span><br><span class="line"></span><br><span class="line">6.S-&gt;C:TEARDOWN response //S回应该请求</span><br></pre></td></tr></table></figure>
 
