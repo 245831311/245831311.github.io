@@ -24,6 +24,7 @@ tags:
 - DStream相关操作(参照官网)
 
 DStream的Transformations
+
 名称 | 功能
 ---|---
 map（func） | Return a new DStream by passing each element of the source DStream through a function func.

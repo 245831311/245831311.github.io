@@ -11,7 +11,7 @@ tags:
 
 ## Spark总体图
 
-![image](file:///D:/%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91/spark.jpg)
+![image](/images/bdata/spark.jpg)
 
 ## Spark基础知识
 
@@ -46,6 +46,7 @@ tags:
 - RDD常用算子介绍
 
 Transformation算子
+
 名称 | 功能
 ---|---
 map（func） | 返回新rdd,可用于将输入元素经过转换获得类似map形式
