@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        wireshark抓包并使用 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E6%8F%90"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%A6%E8%A7%A3"><span class="toc-text">详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%93%E5%8C%85"><span class="toc-text">抓包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8"><span class="toc-text">使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        wireshark抓包并使用
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-07-24 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#视频" title="视频">视频</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>本篇是记录我在平常抓包过程中如何使用wireshark</p>
+<h2 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h2><ul>
+<li>wireshark工具</li>
+</ul>
+<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a>详解</h2><h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><p>使用wireshark，首先就要学会怎么抓包，很简单，在linux下使用以下命令</p>
+<blockquote>
+<p>tcpdump -i eth0 host [ip] -n -vv -A -w 抓包.pcap</p>
+</blockquote>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>将抓到的包用wireshark打开就能见到下面的界面</p>
+<p><img src="/images/video/%E6%8A%93%E5%8C%85%E7%95%8C%E9%9D%A2%E5%9B%BE.png" alt="wireshark界面"></p>
+<html>
+<center>图一</center>
+</html>
+           
+                
+<p>这是一份在对接RTSP视频协议时候抓回来的包，很明显可以看到是基于TCP来传输的。以下记录一下我常用到的主要功能：</p>
+<ol>
+<li>面板使用</li>
+</ol>
+<p><img src="/images/video/%E6%8A%93%E5%8C%85%E4%B8%8A%E6%96%B9%E5%9B%BE.png" alt="wireshark面板"></p>
+<html>
+<center>图二</center>
+</html>
+
+<p>一般来说，通过面板就能看出交互的具体内容。如图二可以前三行列表可以看出TCP三次握手的交互流程。参考TCP三次握手流程</p>
+<p><img src="/images/video/tcp%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%BE.png" alt="image"></p>
+<ol start="2">
+<li>数据详细区</li>
+</ol>
+<p><img src="/images/video/%E6%8A%93%E5%8C%85%E4%B8%8B%E6%96%B9%E5%9B%BE.png" alt="wireshark下半部"></p>
+<html>
+<center>图三</center>
+</html>
+
+
+<p>整个传输过程的传输信息，具体每一层有什么具体信息可以看下相应的资料。由上往下</p>
+<ol>
+<li><p>物理层</p>
+</li>
+<li><p>数据链路层</p>
+</li>
+<li><p>网络层（常用）</p>
+</li>
+<li><p>传输层（常用）</p>
+</li>
+<li><p>应用层（常用）</p>
+</li>
+<li><p>追踪流</p>
+</li>
+</ol>
+<p>展示更具体交互信息</p>
+<blockquote>
+<p>右键点击面板信息&gt;追踪流&gt;TCP流</p>
+</blockquote>
+<p><img src="/images/video/%E6%8A%93%E5%8C%85%E5%8D%8F%E8%AE%AE%E8%BF%BD%E8%B8%AA%E5%9B%BE.png" alt="追踪流"></p>
+<html>
+<center>图四</center>
+</html>
+
+<ol start="4">
+<li>统计丢包率</li>
+</ol>
+<p>一般来说，我们也会去观察究竟数据的丢包率是多小，对于音视频的数据我们一般观察RTP包，特别是以UDP传输的时候。</p>
+<blockquote>
+<p>电话&gt;&gt;RTP&gt;&gt;RTP流</p>
+</blockquote>
+<p><img src="/images/video/%E6%8A%93%E5%8C%85rtp%E7%BB%9F%E8%AE%A1%E5%8C%85.png" alt="RTP丢包率"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/82498482">Wireshark抓包使用指南</a></p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

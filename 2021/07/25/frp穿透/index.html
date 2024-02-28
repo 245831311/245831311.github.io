@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        frp穿透 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#frp%E7%A9%BF%E9%80%8F"><span class="toc-text">frp穿透</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-text">操作步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        frp穿透
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-07-25 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#视频" title="视频">视频</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="frp穿透"><a href="#frp穿透" class="headerlink" title="frp穿透"></a>frp穿透</h1><p>主要介绍如何将内网摄像头的rtsp通过frp穿透工具映射到互联网上。</p>
+<p>准备：</p>
+<p>摄像头ip：172.16.10.2</p>
+<p>内网服务器：10.144.21.90（与摄像头是互通）</p>
+<p>互联网服务器：47.106.89.193</p>
+<p>frp工具包：frp_0.35.1_linux_386.tar.gz</p>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><ol>
+<li><p>两台分别安装frp穿透工具</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/fatedier/frp/releases/download/v0.35.1/frp_0.35.1_linux_386.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置服务端</p>
+</li>
+</ol>
+<p>互联网服务器47.106.89.193作为服务端,配置frps.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000    #绑定端口</span><br><span class="line"></span><br><span class="line">[rtsp]</span><br><span class="line">listen_port = 10000 #监听端口</span><br></pre></td></tr></table></figure>
+
+<p>开启服务端监听命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup ./frps -c ./frps.ini &amp;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>配置客户端</li>
+</ol>
+<p>内网服务器10.144.21.90作为客户端,配置frpc.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 47.106.89.193 #服务端ip</span><br><span class="line">server_port = 7000  #服务端绑定的端口</span><br><span class="line"></span><br><span class="line">#[ssh]</span><br><span class="line">#type = tcp</span><br><span class="line">#local_ip = 127.0.0.1</span><br><span class="line">#local_port = 22</span><br><span class="line">#remote_port = 6000</span><br><span class="line"></span><br><span class="line">[rtsp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = 172.16.10.2  #摄像头Ip</span><br><span class="line">local_port = 554    #摄像头端口</span><br><span class="line">remote_port = 10000 #服务端监听得端口</span><br></pre></td></tr></table></figure>
+
+<p>开启服务端监听命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup ./frpc -c ./frpc.ini &amp;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>结果</li>
+</ol>
+<p>rtsp:&#x2F;&#x2F;admin:<a href="mailto:&#97;&#49;&#50;&#51;&#x34;&#53;&#x36;&#55;&#56;&#64;&#x34;&#55;&#46;&#49;&#48;&#54;&#x2e;&#56;&#57;&#x2e;&#49;&#57;&#x33;">&#97;&#49;&#50;&#51;&#x34;&#53;&#x36;&#55;&#56;&#64;&#x34;&#55;&#46;&#49;&#48;&#54;&#x2e;&#56;&#57;&#x2e;&#49;&#57;&#x33;</a>:10000&#x2F;h264&#x2F;ch33&#x2F;main&#x2F;av_stream</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/liusingbon/p/12623774.html">frp映射摄像头地址及端口</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.oschina.net/p/frp?hmsr=aladdin1e1">frp 内网穿透工具</a></p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

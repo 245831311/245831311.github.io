@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Gateway源码分析（二） - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E7%96%91%E9%97%AE"><span class="toc-text">个人疑问</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%88%E6%9C%AC"><span class="toc-text">版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-text">架构图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E6%88%90"><span class="toc-text">组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-1"><span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E4%B8%80%EF%BC%9A%E5%A6%82%E4%BD%95%E8%BD%AC%E5%8F%91%E8%AF%B7%E6%B1%82"><span class="toc-text">问题一：如何转发请求</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DispatchHandler%E7%B1%BB"><span class="toc-text">DispatchHandler类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RoutePredicateHandlerMapping%E7%B1%BB"><span class="toc-text">RoutePredicateHandlerMapping类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E4%BA%8C%EF%BC%9A%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8CFilter"><span class="toc-text">问题二：如何执行Filter</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8CFilter-FilteringWebHandler%E7%B1%BB"><span class="toc-text">如何执行Filter(FilteringWebHandler类)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E4%B8%89%EF%BC%9A%E5%A6%82%E4%BD%95%E5%8A%A0%E8%BD%BD%E8%B7%AF%E7%94%B1%E3%80%81%E8%BF%87%E6%BB%A4%E5%99%A8%E3%80%81%E6%96%AD%E8%A8%80%E7%AD%89%E4%BF%A1%E6%81%AF"><span class="toc-text">问题三：如何加载路由、过滤器、断言等信息</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RouteDefinitionRouteLocator%E7%B1%BB"><span class="toc-text">RouteDefinitionRouteLocator类</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Gateway源码分析（二）
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-07-25 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#视频" title="视频">视频</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>这一章开始记录我开始Gateway阅读之路，看下究竟是如何实现网关。</p>
+<h1 id="个人疑问"><a href="#个人疑问" class="headerlink" title="个人疑问"></a>个人疑问</h1><ol>
+<li><p>Gateway的网关框架是如何接收请求并转发</p>
+</li>
+<li><p>如何执行Filter</p>
+</li>
+<li><p>如何加载路由、过滤器、断言等信息</p>
+</li>
+</ol>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><h2 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactI&gt;</span><br><span class="line">	&lt;version&gt;2.1.0.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h2><p>还是一样的图<br><img src="/images/video/gateway%E7%BD%91%E5%85%B3%E5%9B%BE.png" alt="Gateway框架"></p>
+<h2 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h2><p>gateway-core.jar是gateway的核心包，主要的实现都在里面。阅读代码前最好先知道个个包的主要功能.</p>
+<p><img src="/images/video/gateway%E7%9A%84jar%E5%8C%85%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="包组成"></p>
+<ul>
+<li>actuate</li>
+</ul>
+<p>该包主要是gateway自带的一个控制器GatewayControllerEndpoint，该endpiont提供了关于filter及routes的信息查询以及指定route信息更新的rest api，这给web界面提供管理配置功能提供了极大的便利</p>
+<ul>
+<li>config</li>
+</ul>
+<p>该包主要是Gateway的配置实体类，譬如yml上面的配置GatewayProperties、全局的跨域配置GlobalCorsProperties等等。</p>
+<ul>
+<li>discovery</li>
+</ul>
+<p>该包主要是实现服务发现的功能。从服务注册中心获取服务注册信息，然后配置相应的路由</p>
+<ul>
+<li>event</li>
+</ul>
+<p>该包是一些发布事件的定义。</p>
+<ul>
+<li>filter</li>
+</ul>
+<p>该包包含了gateway所有内置的过滤器。</p>
+<ul>
+<li>handler</li>
+</ul>
+<p>该包主要包括了所有内置的Predicates断言，RoutePredicateHandlerMapping类是一个实现了将接收请求到转发到filter里面的功能，FilteringWebHandler主要是构造过滤器链。</p>
+<ul>
+<li>route</li>
+</ul>
+<p>该包主要是定义路由信息，构造路由等。</p>
+<ul>
+<li>support</li>
+</ul>
+<p>该包主要是一些工具方法。用于全局。</p>
+<h2 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="问题一：如何转发请求"><a href="#问题一：如何转发请求" class="headerlink" title="问题一：如何转发请求"></a>问题一：如何转发请求</h3><h4 id="DispatchHandler类"><a href="#DispatchHandler类" class="headerlink" title="DispatchHandler类"></a>DispatchHandler类</h4><p>WebFlux请求转发核心类：DispatchHandler</p>
+<p>DispatchHandler内部主要的私有字段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> List&lt;HandlerMapping&gt; handlerMappings;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> List&lt;HandlerAdapter&gt; handlerAdapters;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> List&lt;HandlerResultHandler&gt; resultHandlers;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HandlerMapping</td>
+<td>映射请求到一个处理器。该映射是基于一定的标准、细节因不同HandlerMapping而不同。</br>例如有注解控制器, 简单URL匹配映射等等。</br>主要的HandlerMapping实现：</br>1.有RequestMappingHandlerMapping对于注解的@RequestMapping。</br>2.RouterFunctionMapping 对应于函数式端点路由。</br>3.SimpleUrlHandlerMappingURI路径模式的显式注册。</br>4.WebHandler的实例</td>
+</tr>
+<tr>
+<td>HandlerAdapter</td>
+<td>帮助DispatcherHandler调用映射的请求的处理器，而不管该处理程序实际上是如何调用的。</br>例如执行一个注解控制器需要解释注解。其主要目的是帮助DispatcherHandler隐藏实现的细节。</td>
+</tr>
+<tr>
+<td>HandlerResultHandler</td>
+<td>处理程序调用的结果并最后确定响应。</br>1.ResponseEntityResultHandler：ResponseEntity，处理@Controller实例。</br>2.ServerResponseResultHandler：ServerResponse，处理函数式端点。</br>3.ResponseBodyResultHandler：处理从@ResponseBody方法和@RestController类的返回值。</br>4.ViewResolutionResultHandler：处理成CharSequence,View, Model, Map, Rendering等其他的模型属性。</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">handle</span><span class="params">(ServerWebExchange exchange)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">this</span>.handlerMappings == <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> Mono.error(HANDLER_NOT_FOUND_EXCEPTION);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> Flux.fromIterable(<span class="built_in">this</span>.handlerMappings)</span><br><span class="line">			.concatMap(mapping -&gt; mapping.getHandler(exchange))</span><br><span class="line">			.next()</span><br><span class="line">			.switchIfEmpty(Mono.error(HANDLER_NOT_FOUND_EXCEPTION))</span><br><span class="line">			.flatMap(handler -&gt; invokeHandler(exchange, handler))</span><br><span class="line">			.flatMap(result -&gt; handleResult(exchange, result));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>核心方法主要做了三个步骤：</p>
+<ol>
+<li>匹配每一个不同HandlerMapping，使用首先匹配的那个。</li>
+<li>执行器被找到就会找到对应的HandlerAdapter,然后就会将返回结果返回到HandlerResult里。</li>
+<li>HandlerResult会给出一个合适的处理器去完成直接写到响应里面或者使用View来渲染的处理。</li>
+</ol>
+<h4 id="RoutePredicateHandlerMapping类"><a href="#RoutePredicateHandlerMapping类" class="headerlink" title="RoutePredicateHandlerMapping类"></a>RoutePredicateHandlerMapping类</h4><p>刚说完DispatchHandler的类，就到HandlerMapping了，类RoutePredicateHandlerMapping实现了HandlerMapping。</p>
+<p>其核心私有字段分别有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> FilteringWebHandler webHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> RouteLocator routeLocator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Integer managmentPort;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>Bean类型</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>webHandler</td>
+<td>构建过滤器的责任链</td>
+</tr>
+<tr>
+<td>routeLocator</td>
+<td>路由的定义信息</td>
+</tr>
+<tr>
+<td>managmentPort</td>
+<td>gateway管理端口</td>
+</tr>
+</tbody></table>
+<p>其核心方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> Mono&lt;?&gt; getHandlerInternal(ServerWebExchange exchange) &#123;</span><br><span class="line">	<span class="comment">// don&#x27;t handle requests on the management port if set</span></span><br><span class="line">	<span class="keyword">if</span> (managmentPort != <span class="literal">null</span> &amp;&amp; exchange.getRequest().getURI().getPort() == managmentPort.intValue()) &#123;</span><br><span class="line">		<span class="keyword">return</span> Mono.empty();</span><br><span class="line">	&#125;</span><br><span class="line">	exchange.getAttributes().put(GATEWAY_HANDLER_MAPPER_ATTR, getSimpleName());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> lookupRoute(exchange)</span><br><span class="line">			<span class="comment">// .log(&quot;route-predicate-handler-mapping&quot;, Level.FINER) //name this</span></span><br><span class="line">			.flatMap((Function&lt;Route, Mono&lt;?&gt;&gt;) r -&gt; &#123;</span><br><span class="line">				exchange.getAttributes().remove(GATEWAY_PREDICATE_ROUTE_ATTR);</span><br><span class="line">				<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">					logger.debug(<span class="string">&quot;Mapping [&quot;</span> + getExchangeDesc(exchange) + <span class="string">&quot;] to &quot;</span> + r);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				exchange.getAttributes().put(GATEWAY_ROUTE_ATTR, r);</span><br><span class="line">				<span class="keyword">return</span> Mono.just(webHandler);</span><br><span class="line">			&#125;).switchIfEmpty(Mono.empty().then(Mono.fromRunnable(() -&gt; &#123;</span><br><span class="line">				exchange.getAttributes().remove(GATEWAY_PREDICATE_ROUTE_ATTR);</span><br><span class="line">				<span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</span><br><span class="line">					logger.trace(<span class="string">&quot;No RouteDefinition found for [&quot;</span> + getExchangeDesc(exchange) + <span class="string">&quot;]&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该核心方法做了几件事：</p>
+<ol>
+<li>找到合适的路由lookupRoute方法。</li>
+<li>将路由信息放到ServerWebExchange请求线程的属性里，以便整个运行随时可用。</li>
+<li>执行webHandler中的过滤器链。&#x3D;&#x3D;（后面会介绍如何执行）&#x3D;&#x3D;</li>
+</ol>
+<p>lookupRoute执行过程：</p>
+<ol>
+<li>通过routeLocator的获取所有配置好的路由信息。 &#x3D;&#x3D;（后面会介绍如何加载路由信息、过滤器、断言）&#x3D;&#x3D;</li>
+<li>匹配每一个路由的断言，是否符合，若符合则返回对应的路由信息。若不符合则next()下一个路由的断言匹配。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Mono&lt;Route&gt; <span class="title function_">lookupRoute</span><span class="params">(ServerWebExchange exchange)</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">this</span>.routeLocator</span><br><span class="line">			.getRoutes()</span><br><span class="line">			<span class="comment">//individually filter routes so that filterWhen error delaying is not a problem</span></span><br><span class="line">			.concatMap(route -&gt; Mono</span><br><span class="line">					.just(route)</span><br><span class="line">					.filterWhen(r -&gt; &#123;</span><br><span class="line">						<span class="comment">// add the current route we are testing</span></span><br><span class="line">						exchange.getAttributes().put(GATEWAY_PREDICATE_ROUTE_ATTR, r.getId());</span><br><span class="line">						<span class="keyword">return</span> r.getPredicate().apply(exchange);</span><br><span class="line">					&#125;)</span><br><span class="line">					<span class="comment">//instead of immediately stopping main flux due to error, log and swallow it</span></span><br><span class="line">					.doOnError(e -&gt; logger.error(<span class="string">&quot;Error applying predicate for route: &quot;</span>+route.getId(), e))</span><br><span class="line">					.onErrorResume(e -&gt; Mono.empty())</span><br><span class="line">			)</span><br><span class="line">			<span class="comment">// .defaultIfEmpty() put a static Route not found</span></span><br><span class="line">			<span class="comment">// or .switchIfEmpty()</span></span><br><span class="line">			<span class="comment">// .switchIfEmpty(Mono.&lt;Route&gt;empty().log(&quot;noroute&quot;))</span></span><br><span class="line">			.next()</span><br><span class="line">			<span class="comment">//<span class="doctag">TODO:</span> error handling</span></span><br><span class="line">			.map(route -&gt; &#123;</span><br><span class="line">				<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">					logger.debug(<span class="string">&quot;Route matched: &quot;</span> + route.getId());</span><br><span class="line">				&#125;</span><br><span class="line">				validateRoute(route, exchange);</span><br><span class="line">				<span class="keyword">return</span> route;</span><br><span class="line">			&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="问题二：如何执行Filter"><a href="#问题二：如何执行Filter" class="headerlink" title="问题二：如何执行Filter"></a>问题二：如何执行Filter</h3><h4 id="如何执行Filter-FilteringWebHandler类"><a href="#如何执行Filter-FilteringWebHandler类" class="headerlink" title="如何执行Filter(FilteringWebHandler类)"></a>如何执行Filter(FilteringWebHandler类)</h4><p>执行流程：</p>
+<ol>
+<li>初始化时候构造好全局的过滤器集合。</li>
+<li>合并路由上配置的过滤器与全局过滤器</li>
+<li>排序好所有过滤器传入DefaultGatewayFilterChain的责任链里执行。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Mono&lt;Void&gt; handle(ServerWebExchange exchange) &#123;</span><br><span class="line">	Route route = exchange.getRequiredAttribute(GATEWAY_ROUTE_ATTR);</span><br><span class="line">	List&lt;GatewayFilter&gt; gatewayFilters = route.getFilters();</span><br><span class="line"></span><br><span class="line">	List&lt;GatewayFilter&gt; combined = new ArrayList&lt;&gt;(this.globalFilters);</span><br><span class="line">	combined.addAll(gatewayFilters);</span><br><span class="line">	//TODO: needed or cached?</span><br><span class="line">	AnnotationAwareOrderComparator.sort(combined);</span><br><span class="line"></span><br><span class="line">	if (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(&quot;Sorted gatewayFilterFactories: &quot;+ combined);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return new DefaultGatewayFilterChain(combined).filter(exchange);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>责任链是一个常用的编程设计模式，它能够将请求与处理步骤解耦，请求操作对链内部的执行透明，而且每个链子都有自己具体实现，能够自由组装复用，不相互影响，使得代码更加简洁。不过责任联在调试方面相对来说比较麻烦，不便于观察等缺点。</p>
+<p>看下如何构造一个责任联，内部类DefaultGatewayFilterChain<br>的filter方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">DefaultGatewayFilterChain</span> <span class="keyword">implements</span> <span class="title class_">GatewayFilterChain</span> &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> index;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">final</span> List&lt;GatewayFilter&gt; filters;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> <span class="title function_">DefaultGatewayFilterChain</span><span class="params">(List&lt;GatewayFilter&gt; filters)</span> &#123;</span><br><span class="line">			<span class="built_in">this</span>.filters = filters;</span><br><span class="line">			<span class="built_in">this</span>.index = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> <span class="title function_">DefaultGatewayFilterChain</span><span class="params">(DefaultGatewayFilterChain parent, <span class="type">int</span> index)</span> &#123;</span><br><span class="line">			<span class="built_in">this</span>.filters = parent.getFilters();</span><br><span class="line">			<span class="built_in">this</span>.index = index;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> List&lt;GatewayFilter&gt; <span class="title function_">getFilters</span><span class="params">()</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> filters;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">filter</span><span class="params">(ServerWebExchange exchange)</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> Mono.defer(() -&gt; &#123;</span><br><span class="line">				<span class="keyword">if</span> (<span class="built_in">this</span>.index &lt; filters.size()) &#123;</span><br><span class="line">					<span class="type">GatewayFilter</span> <span class="variable">filter</span> <span class="operator">=</span> filters.get(<span class="built_in">this</span>.index);</span><br><span class="line">					<span class="type">DefaultGatewayFilterChain</span> <span class="variable">chain</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DefaultGatewayFilterChain</span>(<span class="built_in">this</span>, <span class="built_in">this</span>.index + <span class="number">1</span>);</span><br><span class="line">					<span class="keyword">return</span> filter.filter(exchange, chain);</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					<span class="keyword">return</span> Mono.empty(); <span class="comment">// complete</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="问题三：如何加载路由、过滤器、断言等信息"><a href="#问题三：如何加载路由、过滤器、断言等信息" class="headerlink" title="问题三：如何加载路由、过滤器、断言等信息"></a>问题三：如何加载路由、过滤器、断言等信息</h3><h4 id="RouteDefinitionRouteLocator类"><a href="#RouteDefinitionRouteLocator类" class="headerlink" title="RouteDefinitionRouteLocator类"></a>RouteDefinitionRouteLocator类</h4><ul>
+<li>获取路由信息</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Flux&lt;Route&gt; getRoutes() &#123;</span><br><span class="line">	return this.routeDefinitionLocator.getRouteDefinitions()</span><br><span class="line">			.map(this::convertToRoute)</span><br><span class="line">			//TODO: error handling</span><br><span class="line">			.map(route -&gt; &#123;</span><br><span class="line">				if (logger.isDebugEnabled()) &#123;</span><br><span class="line">					logger.debug(&quot;RouteDefinition matched: &quot; + route.getId());</span><br><span class="line">				&#125;</span><br><span class="line">				return route;</span><br><span class="line">			&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	/* TODO: trace logging</span><br><span class="line">		if (logger.isTraceEnabled()) &#123;</span><br><span class="line">			logger.trace(&quot;RouteDefinition did not match: &quot; + routeDefinition.getId());</span><br><span class="line">		&#125;*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&#x3D;&#x3D;this.routeDefinitionLocator.getRouteDefinitions()&#x3D;&#x3D; 初始化首次加载获取配置文件中定义的路由信息并存于缓存中以便下次使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public CachingRouteDefinitionLocator(RouteDefinitionLocator delegate) &#123;</span><br><span class="line">		this.delegate = delegate;</span><br><span class="line">		routeDefinitions = CacheFlux.lookup(cache, &quot;routeDefs&quot;, RouteDefinition.class)</span><br><span class="line">				.onCacheMissResume(this.delegate::getRouteDefinitions);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&#x3D;&#x3D;convertToRoute&#x3D;&#x3D;则是将配置信息定义的路由信息转变为真正内部使用的路由实体，具体实现如下：</p>
+<ol>
+<li>组装断言链表</li>
+<li>获取配置信息定义过滤器</li>
+<li>组装成真正路由对象Route<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private Route convertToRoute(RouteDefinition routeDefinition) &#123;</span><br><span class="line">		AsyncPredicate&lt;ServerWebExchange&gt; predicate = combinePredicates(routeDefinition);</span><br><span class="line">		List&lt;GatewayFilter&gt; gatewayFilters = getFilters(routeDefinition);</span><br><span class="line"></span><br><span class="line">		return Route.async(routeDefinition)</span><br><span class="line">				.asyncPredicate(predicate)</span><br><span class="line">				.replaceFilters(gatewayFilters)</span><br><span class="line">				.build();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>其实这段代码使用了一个设计模式就是建造者模式。该模式能将构建和实现分离开来，建造者能逐步细化而不影响其它模块功能。不过建造者对产品会依赖，当产品发生变化，建造者相应也需要改变。所以这种模式建议用在比较简化的建造者依赖类上。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">return Route.async(routeDefinition)</span><br><span class="line">				.asyncPredicate(predicate)</span><br><span class="line">				.replaceFilters(gatewayFilters)</span><br><span class="line">				.build();</span><br></pre></td></tr></table></figure>
+<p><img src="/images/video/Router%E7%9A%84%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="建造者模式"></p>
+<p>“断言”的功能在我看来实现得是非常巧妙的，所有断言正如过滤器一样都有一个共同的父类AbstractRoutePredicateFactory，实现apply的方法。看个例子：</p>
+<p>PathRoutePredicateFactory断言类：作用是匹配请求uri资源。可以看出返回的是一个Predicate的实例，这样的好处就是在下次执行只会执行return返回的这一部分代码功能，不再需要执行配置行的代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Predicate&lt;ServerWebExchange&gt; apply(Config config) &#123;</span><br><span class="line">	final ArrayList&lt;PathPattern&gt; pathPatterns = new ArrayList&lt;&gt;();</span><br><span class="line">	synchronized (this.pathPatternParser) &#123;</span><br><span class="line">		pathPatternParser.setMatchOptionalTrailingSeparator(config.isMatchOptionalTrailingSeparator());</span><br><span class="line">		config.getPatterns().forEach(pattern -&gt; &#123;</span><br><span class="line">			PathPattern pathPattern = this.pathPatternParser.parse(pattern);</span><br><span class="line">			pathPatterns.add(pathPattern);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	return exchange -&gt; &#123;</span><br><span class="line">		PathContainer path = parsePath(exchange.getRequest().getURI().getPath());</span><br><span class="line"></span><br><span class="line">		Optional&lt;PathPattern&gt; optionalPathPattern = pathPatterns.stream()</span><br><span class="line">				.filter(pattern -&gt; pattern.matches(path))</span><br><span class="line">				.findFirst();</span><br><span class="line"></span><br><span class="line">		if (optionalPathPattern.isPresent()) &#123;</span><br><span class="line">			PathPattern pathPattern = optionalPathPattern.get();</span><br><span class="line">			traceMatch(&quot;Pattern&quot;, pathPattern.getPatternString(), path, true);</span><br><span class="line">			PathMatchInfo pathMatchInfo = pathPattern.matchAndExtract(path);</span><br><span class="line">			putUriTemplateVariables(exchange, pathMatchInfo.getUriVariables());</span><br><span class="line">			return true;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			traceMatch(&quot;Pattern&quot;, config.getPatterns(), path, false);</span><br><span class="line">			return false;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后通过Flux.zip方法连成一条断言链子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private AsyncPredicate&lt;ServerWebExchange&gt; combinePredicates(RouteDefinition routeDefinition) &#123;</span><br><span class="line">	List&lt;PredicateDefinition&gt; predicates = routeDefinition.getPredicates();</span><br><span class="line">	AsyncPredicate&lt;ServerWebExchange&gt; predicate = lookup(routeDefinition, predicates.get(0));</span><br><span class="line"></span><br><span class="line">	for (PredicateDefinition andPredicate : predicates.subList(1, predicates.size())) &#123;</span><br><span class="line">		AsyncPredicate&lt;ServerWebExchange&gt; found = lookup(routeDefinition, andPredicate);</span><br><span class="line">		predicate = predicate.and(found);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return predicate;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">---------------------------------------------------</span><br><span class="line"></span><br><span class="line">default AsyncPredicate&lt;T&gt; and(AsyncPredicate&lt;? super T&gt; other) &#123;</span><br><span class="line">	Objects.requireNonNull(other, &quot;other must not be null&quot;);</span><br><span class="line"></span><br><span class="line">	return t -&gt; Flux.zip(apply(t), other.apply(t))</span><br><span class="line">			.map(tuple -&gt; tuple.getT1() &amp;&amp; tuple.getT2());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实到这里这一章就差不多了，基本上Gateway的主要总体框架功能就这些。这一次的阅读源码能够使我对lambda表达式的用处更深刻，而且，对这种响应式流的理解更进一步了，后续还会持续学习关于netty reactor的用法。</p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

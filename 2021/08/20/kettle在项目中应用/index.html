@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        kettle在项目中应用 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kettle%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="toc-text">Kettle的介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D"><span class="toc-text">功能介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8kettle"><span class="toc-text">为什么使用kettle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kettle%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="toc-text">Kettle安装与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E6%88%90Kettle"><span class="toc-text">集成Kettle</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        kettle在项目中应用
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-08-20 12:00:00</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>随着发展，公司后续对接的项目对大数据量的存储和清洗需求越来越旺盛，我有幸接触这个项目并成为其中开发一员，致力于构建了一个底层的ETL清洗服务。这也是我首次调部门的第一个项目。</p>
+<h2 id="Kettle的介绍"><a href="#Kettle的介绍" class="headerlink" title="Kettle的介绍"></a>Kettle的介绍</h2><p>Kettle从名称就可以知道“水壶”，顾名思义就是封装了很多内置功能，它是一个ETL的开源工具。Kettle就像一个容纳器，将很多ETL所需要的功能都涵盖进去，形成一个独立的生态系统。</p>
+<h3 id="功能介绍"><a href="#功能介绍" class="headerlink" title="功能介绍"></a>功能介绍</h3><p>下图可以看出,kettle包含了丰富的功能。</p>
+<p><img src="/images/bdata/kettle%E5%8A%9F%E8%83%BD%E5%9B%BE.png" alt="Kettle功能图"></p>
+<html>
+<center>kettle功能图</center>
+</html>
+
+<h3 id="为什么使用kettle"><a href="#为什么使用kettle" class="headerlink" title="为什么使用kettle"></a>为什么使用kettle</h3><p>基于Kettle开发了一段时间，也逐渐深入了解到kettle的优势。以下是我使用Kettle以来个人的观点：</p>
+<p>优势：</p>
+<ul>
+<li>内置众多的成熟稳定开源组件，天然支持多种ETL业务场景。</li>
+<li>kettle设计是基于职责单一原则，各个组件独立，不相互依赖。因此提高重用性。</li>
+<li>构建任务脚本简单，通过PC客户端拖拉组件的方式就能轻松实现转化任务。因此不用有编程基础的人都能够自行实现。</li>
+<li>kettle有独立的官网，上面文档较为完善，但是可能市面上不怎么流行，网上关于kettle的问题并不是很多。</li>
+</ul>
+<p>劣势：</p>
+<ul>
+<li>组件繁多，有额外的学习门槛。</li>
+<li>没有提供Web端的开发页面，只有PC客户端，因此开发人员只能通过客户端调试并开发。</li>
+<li>由于基于开源组件开发，调试难度相对较大。线上部署测试难度大。</li>
+<li>天然包含众多组件，偏重量级开源框架，因此打包会比较大。</li>
+<li>不支持对非结构化文本的解释，如非结构化网页html、爬虫、不支持对流的操作和传输、难以支持逻辑较为复杂的业务流程，如数据融合，数据分析等。</li>
+<li>开发自定义组件相对复杂，调试比较难。</li>
+</ul>
+<p>我大大小小也基于kettle开发过几十个脚本，但是往全公司推广确实举步维艰，因为需要学习成本，这个也跟公司的架构有关系（主要原因）。一旦脚本众多，维护起来就越来越麻烦，特别对于过于复杂的脚本来说，没几多人愿意维护起来。</p>
+<h3 id="Kettle安装与使用"><a href="#Kettle安装与使用" class="headerlink" title="Kettle安装与使用"></a>Kettle安装与使用</h3><p><a target="_blank" rel="noopener" href="http://note.youdao.com/noteshare?id=28505b7348b9d73ed38d8da36bfd1425&sub=171D26FDD37442F184CA9B8947192B95">Kettle安装使用</a></p>
+<h3 id="集成Kettle"><a href="#集成Kettle" class="headerlink" title="集成Kettle"></a>集成Kettle</h3><ol>
+<li>添加Maven<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;kettle.version&gt;8.3.0.0-371&lt;/kettle.version&gt;</span><br><span class="line"></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;pentaho-kettle&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;kettle-core&lt;/artifactId&gt;</span><br><span class="line">	&lt;version&gt;$&#123;kettle.version&#125;&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;pentaho-kettle&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;kettle-engine&lt;/artifactId&gt;</span><br><span class="line">	&lt;version&gt;$&#123;kettle.version&#125;&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;pentaho-kettle&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;kettle-dbdialog&lt;/artifactId&gt;</span><br><span class="line">	&lt;version&gt;$&#123;kettle.version&#125;&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>需要额外添加Pentaho自身的仓库，不然下载不了对应的Jar包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;repositories&gt;</span><br><span class="line">  	&lt;repository&gt;</span><br><span class="line">      &lt;id&gt;pentaho-public&lt;/id&gt;</span><br><span class="line">      &lt;name&gt;Pentaho Public&lt;/name&gt;</span><br><span class="line">      &lt;url&gt;http://nexus.pentaho.org/content/groups/omni&lt;/url&gt;</span><br><span class="line">    &lt;/repository&gt;</span><br><span class="line">&lt;/repositories&gt;</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>代码集成</li>
+</ol>
+<ul>
+<li><p>加载插件并进行kettle环境的初始化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean init() &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">		if (pluginDir != null) &#123;</span><br><span class="line">			// Load plugins</span><br><span class="line">			StepPluginType.getInstance().getPluginFolders().add(new PluginFolder(pluginDir, false, true));</span><br><span class="line">		&#125;</span><br><span class="line">		KettleEnvironment.init();</span><br><span class="line">	&#125; catch (KettleException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		Log.error(&quot;kettle executor init&quot;,e);</span><br><span class="line">		return false;</span><br><span class="line">	&#125;</span><br><span class="line">	return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行Trans任务具体实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> filePath  脚本路径</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> paramMap  脚本参数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> level 脚本输出日志级别</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">runTrans</span><span class="params">(String filePath, Map&lt;String, String&gt; paramMap,String level)</span> &#123;</span><br><span class="line">		<span class="type">Trans</span> <span class="variable">trans</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			</span><br><span class="line">			LOG.info(<span class="string">&quot;Running trans &#123;&#125;...&quot;</span>, filePath);</span><br><span class="line">			<span class="type">long</span> <span class="variable">st</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">			</span><br><span class="line">			<span class="type">TransMeta</span> <span class="variable">transMeta</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransMeta</span>(filePath);    <span class="comment">//构建Tran文件元数据对象</span></span><br><span class="line">			</span><br><span class="line">			trans = <span class="keyword">new</span> <span class="title class_">Trans</span>(transMeta);   <span class="comment">//构建Trans任务</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">//设置Trans里面输入的参数</span></span><br><span class="line">			<span class="keyword">if</span> (paramMap != <span class="literal">null</span>) &#123;</span><br><span class="line">				<span class="keyword">for</span>( String param: paramMap.keySet() ) &#123;</span><br><span class="line">					trans.setParameterValue( param, paramMap.get(param));</span><br><span class="line">					transMeta.setParameterValue( param, paramMap.get(param));</span><br><span class="line">				&#125;		</span><br><span class="line">				trans.activateParameters();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//执行Trans任务的脚本</span></span><br><span class="line">			trans.execute(<span class="literal">null</span>);</span><br><span class="line">			trans.waitUntilFinished();</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span> (trans.getErrors() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">				LOG.error(<span class="string">&quot;There are errors while running transformation! Error Code: &#123;&#125;&quot;</span>, trans.getErrors());</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="type">long</span> <span class="variable">dt</span> <span class="operator">=</span> System.currentTimeMillis() - st;</span><br><span class="line">				LOG.info(<span class="string">&quot;Run trans &#123;&#125; finish in &#123;&#125; ms&quot;</span>, filePath, dt);</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">if</span>(!trans.isFinished())&#123;</span><br><span class="line">				trans.stopAll();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; </span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>运行</li>
+</ol>
+<p>到了这部基本上已经可以跑kettle生成的trans的脚本，如果还想增加调度的功能话可以集成quartz调度包、市面上比较流行的saturn、xxl-job等调度框架，或者基于公司的业务架构来自行实现调度框架也是可以。以上的框架我也有使用过并进行对比和集成。后面会有一章节额外说明，这里就不详细说了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://community.hitachivantara.com/s/article/data-integration-kettle">kettle官网</a></p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Spark Streaming基础知识点 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spark-Streaming%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">Spark Streaming基础知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark-Streaming-%E5%8A%9F%E8%83%BD%E5%9B%BE"><span class="toc-text">Spark Streaming 功能图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark-Streaming-%E7%89%B9%E6%80%A7"><span class="toc-text">Spark Streaming 特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-text">基础知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Spark Streaming基础知识点
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-08-27 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="Spark-Streaming基础知识点"><a href="#Spark-Streaming基础知识点" class="headerlink" title="Spark Streaming基础知识点"></a>Spark Streaming基础知识点</h1><h2 id="Spark-Streaming-功能图"><a href="#Spark-Streaming-功能图" class="headerlink" title="Spark Streaming 功能图"></a>Spark Streaming 功能图</h2><h2 id="Spark-Streaming-特性"><a href="#Spark-Streaming-特性" class="headerlink" title="Spark Streaming 特性"></a>Spark Streaming 特性</h2><ol>
+<li>易用：能够通过API创建应用</li>
+<li>容错：自身能够恢复丢失的操作或者工作的状态</li>
+<li>易整合到spark体系中</li>
+</ol>
+<h2 id="基础知识点"><a href="#基础知识点" class="headerlink" title="基础知识点"></a>基础知识点</h2><ul>
+<li><p>DStream概念：DStream是基础抽象,代表了持续性的流式数据。在内部实现上，DStream表示一系列连续的RDD</p>
+</li>
+<li><p>DStream相关操作(参照官网)</p>
+</li>
+</ul>
+<p>DStream的Transformations</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>map（func）</td>
+<td>Return a new DStream by passing each element of the source DStream through a function func.</td>
+</tr>
+<tr>
+<td>flatMap(func)</td>
+<td>Similar to map, but each input item can be mapped to 0 or more output items.</td>
+</tr>
+<tr>
+<td>filter(func)</td>
+<td>Return a new DStream by selecting only the records of the source DStream on which func returns true.</td>
+</tr>
+<tr>
+<td>repartition(numPartitions)</td>
+<td>Changes the level of parallelism in this DStream by creating more or fewer partitions.</td>
+</tr>
+<tr>
+<td>union(otherStream)</td>
+<td>Return a new DStream that contains the union of the elements in the source DStream and otherDStream.</td>
+</tr>
+<tr>
+<td>count()</td>
+<td>Return a new DStream of single-element RDDs by counting the number of elements in each RDD of the source DStream.</td>
+</tr>
+<tr>
+<td>reduce(func)</td>
+<td>Return a new DStream of single-element RDDs by aggregating the elements in each RDD of the source DStream using a function func (which takes two arguments and returns one). The function should be associative so that it can be computed in parallel.</td>
+</tr>
+<tr>
+<td>countByValue()</td>
+<td>When called on a DStream of elements of type K, return a new DStream of (K, Long) pairs where the value of each key is its frequency in each RDD of the source DStream.</td>
+</tr>
+<tr>
+<td>reduceByKey(func, [numTasks])</td>
+<td>When called on a DStream of (K, V) pairs, return a new DStream of (K, V) pairs where the values for each key are aggregated using the given reduce function. Note: By default, this uses Spark’s default number of parallel tasks (2 for local mode, and in cluster mode the number is determined by the config property spark.default.parallelism) to do the grouping. You can pass an optional numTasks argument to set a different number of tasks.</td>
+</tr>
+<tr>
+<td>join(otherStream, [numTasks])</td>
+<td>When called on two DStreams of (K, V) and (K, W) pairs, return a new DStream of (K, (V, W)) pairs with all pairs of elements for each key.</td>
+</tr>
+<tr>
+<td>cogroup(otherStream, [numTasks])</td>
+<td>When called on a DStream of (K, V) and (K, W) pairs, return a new DStream of (K, Seq[V], Seq[W]) tuples.</td>
+</tr>
+<tr>
+<td>transform(func)</td>
+<td>Return a new DStream by applying a RDD-to-RDD function to every RDD of the source DStream. This can be used to do arbitrary RDD operations on the DStream.</td>
+</tr>
+<tr>
+<td>updateStateByKey(func)</td>
+<td>Return a new “state” DStream where the state for each key is updated by applying the given function on the previous state of the key and the new values for the key. This can be used to maintain arbitrary state data for each key.</td>
+</tr>
+</tbody></table>
+<p>主要讲解常用Operation</p>
+<p>1.UpdateStateByKey Operation</p>
+<p>能够将前后的数据通过给出的函数整合起来，如统计之类的功能</p>
+<p>Java的Demo</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Function2&lt;List&lt;Integer&gt;, Optional&lt;Integer&gt;, Optional&lt;Integer&gt;&gt; updateFunction =</span><br><span class="line">  (values, state) -&gt; &#123;</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">newSum</span> <span class="operator">=</span> ...  <span class="comment">// add the new values with the previous running count to get the new count</span></span><br><span class="line">    <span class="keyword">return</span> Optional.of(newSum);</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JavaPairDStream&lt;String, Integer&gt; runningCounts = pairs.updateStateByKey(updateFunction);</span><br></pre></td></tr></table></figure>
+
+<p>2.Window Operations</p>
+<p>窗口函数，通过滑动窗口间隔来进行计算</p>
+<p>3.Transform Operation</p>
+<p>Transform允许DStream上执行任意的RDD-to-RDD函数。通过该函数可以方便的扩展Spark API</p>
+<p>4.Output Operations</p>
+<p>能够将DStream的数据输出到多个外部系统</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://spark.apache.org/docs/latest/streaming-programming-guide.html#a-quick-example">Spark Streaming guide</a></li>
+</ol>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

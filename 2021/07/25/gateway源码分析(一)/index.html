@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Gateway源码分析（一） - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-WebFlux%E5%AD%A6%E4%B9%A0"><span class="toc-text">Spring WebFlux学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#API"><span class="toc-text">API</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-text">参考</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Gateway源码分析（一）
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-07-25 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#视频" title="视频">视频</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>当选用了SpringCloud Gateway作为视频项目的网关之后,出于学习的心态，看下视频网关是如何构造起来的。</p>
+<h2 id="Spring-WebFlux学习"><a href="#Spring-WebFlux学习" class="headerlink" title="Spring WebFlux学习"></a>Spring WebFlux学习</h2><p>阅读源码之前首先学习下WebFlux基础概念和相关常用的API</p>
+<p>Spring WebFlux简单说是与Spring MVC类似的一门响应式异步非阻塞Web端控制框架。与Spring MVC有着相同功能的注解</p>
+<ol>
+<li>什么是响应式编程(Reactive)</li>
+</ol>
+<p>官方解释：</p>
+<blockquote>
+<p>The term, “reactive,”  refers to programming models that are built around reacting to change<br>响应式编程是一种围绕对变化作出反应而构建的编程模型。</p>
+</blockquote>
+<p>后面给出了例子：</p>
+<blockquote>
+<p>network components reacting to I&#x2F;O events, UI controllers reacting to mouse events, and others. In that sense, non-blocking is reactive, because, instead of being blocked, we are now in the mode of reacting to notifications as operations complete or data becomes available.<br>网络组件对IO事件的响应，UI控制器对鼠标事件的响应。从这个意义上说，非阻塞也是响应式,因为我们现在也是在操作完成或者数据可用的时候作出响应的模式，而不是被阻塞。</p>
+</blockquote>
+<ol start="2">
+<li>什么是背压（back pressure）</li>
+</ol>
+<p>官方解析：</p>
+<blockquote>
+<p>Reactive Streams is a small spec (also adopted in Java 9) that defines the interaction between asynchronous components with back pressure. For example a data repository (acting as Publisher) can produce data that an HTTP server (acting as Subscriber) can then write to the response. The main purpose of Reactive Streams is to let the subscriber control how quickly or how slowly the publisher produces data.<br>响应式流是一个小小的规范，定义了带有背压异步组件交互。例如，数据仓库（作为发布者）产生数据使HTTP服务（作为订阅者）能响应。主要目的就是响应式能让订阅者控制发布者发布数据的快与慢。</p>
+</blockquote>
+<p>其实上述说白了就是订阅者能够通过生产者需要多小数据，这样能够以免生产者无限量产生数据压垮订阅者。</p>
+<ol start="3">
+<li>SpringMVC与WebFlux选择<br><img src="https://docs.spring.io/spring-framework/docs/current/reference/html/images/spring-mvc-and-webflux-venn.png" alt="webFlux&amp;SpringMVC"></li>
+</ol>
+<ul>
+<li><p>如果您有运行正常的Spring MVC应用程序，则无需更改。命令式编程是编写，理解和调试代码的最简单方法。您有最大的库选择空间，因为从历史上看，大多数库都是阻塞的。</p>
+</li>
+<li><p>如果您已经在选择无阻塞的Web堆栈，Spring WebFlux可以提供与该领域其他服务器相同的执行模型优势，还可以选择服务器（Netty，Tomcat，Jetty，Undertow和Servlet 3.1+容器），选择编程模型（带注释的控制器和功能性Web端点），以及选择反应式库（Reactor，RxJava或其他）。</p>
+</li>
+<li><p>如果您对与Java 8 lambda或Kotlin一起使用的轻量级功能性Web框架感兴趣，则可以使用Spring WebFlux功能性Web端点。对于要求较低复杂性的较小应用程序或微服务（可以受益于更高的透明度和控制）而言，这也是一个不错的选择。</p>
+</li>
+<li><p>在微服务架构中，您可以混合使用带有Spring MVC或Spring WebFlux控制器或带有Spring WebFlux功能端点的应用程序。在两个框架中都支持相同的基于注释的编程模型，这使得重用知识变得更加容易，同时还为正确的工作选择了正确的工具。</p>
+</li>
+<li><p>评估应用程序的一种简单方法是检查其依赖关系。如果您要使用阻塞性持久性API（JPA，JDBC）或网络API，则Spring MVC至少是通用体系结构的最佳选择。使用Reactor和RxJava在单独的线程上执行阻塞调用在技术上是可行的，但您不会充分利用非阻塞Web堆栈。</p>
+</li>
+<li><p>如果您的Spring MVC应用程序具有对远程服务的调用，请尝试使用active WebClient。您可以直接从Spring MVC控制器方法返回反应类型（Reactor，RxJava或其他）。每个呼叫的等待时间或呼叫之间的相互依赖性越大，好处就越明显。Spring MVC控制器也可以调用其他反应式组件。</p>
+</li>
+</ul>
+<ol start="4">
+<li>WebFlux提供了两种模型</li>
+</ol>
+<ul>
+<li>注解控制器（Annotated Controllers）：与Spring MVC有一致的注解，都是基于spring-web模型。一个显著的区别是，WebFlux也支持响应式@RequestBody参数。</li>
+<li>函数终端（Functional Endpoints）：基于Lambda,轻量级和函数编程模型。提供了大量的方法来路由和处理请求。与注解控制器（Annotated Controllers）最大区别就是函数端模型能够负责请求的从头到尾的处理而不是只是通过声明注解然后回调。</li>
+</ul>
+<h3 id="API"><a href="#API" class="headerlink" title="API"></a>API</h3><p>两个Publisher接口：Flux与Mono。两者区别在于Flux是代表多个元素的发布者，Mono是单个元素的发布者.</p>
+<p>Mono 实现了 Publisher 接口，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">empty()：创建一个不包含任何元素，只发布结束消息的序列。</span><br><span class="line">just()：可以指定序列中包含的全部元素。创建出来的 Mono序列在发布这些元素之后会自动结束。</span><br><span class="line">justOrEmpty()：从一个 Optional 对象或可能为 null 的对象中创建 Mono。只有 Optional 对象中包含值或对象不为 null 时，Mono 序列才产生对应的元素。</span><br><span class="line">error(Throwable error)：创建一个只包含错误消息的序列。</span><br><span class="line">never()：创建一个不包含任何消息通知的序列。</span><br><span class="line">fromCallable()、fromCompletionStage()、fromFuture()、fromRunnable()和 fromSupplier()：分别从 Callable、CompletionStage、CompletableFuture、Runnable 和 Supplier 中创建 Mono。</span><br><span class="line">delay(Duration duration)和 delayMillis(long duration)：创建一个 Mono 序列，在指定的延迟时间之后，产生数字 0 作为唯一值。</span><br><span class="line">create()：通过 create()方法来使用 MonoSink 来创建 Mono。</span><br></pre></td></tr></table></figure>
+
+<p>Flux</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">just：可以指定序列中包含的全部元素。创建出来的 Flux 序列在发布这些元素之后会自动结束。</span><br><span class="line">fromArray、fromIterable、fromStream：可以从一个数组、Iterable 对象或 Stream 对象中创建 Flux 对象。</span><br><span class="line">empty()：创建一个不包含任何元素，只发布结束消息的序列,在响应式编程中，流的传递是基于元素的，empty表示没有任何元素，所以不会进行后续传递，需要用switchIfEmpty等处理</span><br><span class="line">error(Throwable error)：创建一个只包含错误消息的序列。</span><br><span class="line">never()：创建一个不包含任何消息通知的序列。使用示例：</span><br><span class="line">range(int start, int count)：创建包含从 start 起始的 count 个数量的 Integer 对象的序列。</span><br><span class="line">intervalMillis(long period)： interval()方法的作用相同，只不过该方法通过毫秒数来指定时间间隔和延迟时间。</span><br><span class="line">create()：与 generate()方法的不同之处在于所使用的是 FluxSink 对象。FluxSink 支持同步和异步的消息产生，并且可以在一次调用中产生多个元素。</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这一章主要是简单记录下WebFlux的介绍以及简单说明下WebFlux相关的几个概念。WebFlux的官方文档还是相对比较完善的，里面都有挺详细的说明，我就不一一照搬到这里。下一章就开始阅读Gateway的代码，看下Gateway里面是如何使用WebFlux构建网关。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#spring-webflux">webFlux官网</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/92460075">外行人都能看得懂的WebFlux</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI4Njg5MDA5NA==&mid=2247485692&idx=1&sn=a6b3f040b13fa2324992b11a927e34dc&chksm=ebd749fddca0c0eb1b05c08ede7ee4a44699584fbc0c3449ec2cac7642fd13819470ec7f44d8&token=1024331018&lang=zh_CN#rd">最近学到的Lambda表达式基础知识</a></p>
+</li>
+</ul>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

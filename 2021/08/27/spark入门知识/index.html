@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Spark入门知识 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spark%E5%85%A5%E9%97%A8%E7%9F%A5%E8%AF%86"><span class="toc-text">Spark入门知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark%E6%80%BB%E4%BD%93%E5%9B%BE"><span class="toc-text">Spark总体图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spark%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-text">Spark基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spark-RDD%E7%AE%97%E5%AD%90"><span class="toc-text">Spark RDD算子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spark%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%84"><span class="toc-text">Spark执行结构</span></a></li></ol></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Spark入门知识
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2021-08-27 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="Spark入门知识"><a href="#Spark入门知识" class="headerlink" title="Spark入门知识"></a>Spark入门知识</h1><h2 id="Spark总体图"><a href="#Spark总体图" class="headerlink" title="Spark总体图"></a>Spark总体图</h2><p><img src="file:///D:/%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91/spark.jpg" alt="image"></p>
+<h2 id="Spark基础知识"><a href="#Spark基础知识" class="headerlink" title="Spark基础知识"></a>Spark基础知识</h2><h3 id="Spark-RDD算子"><a href="#Spark-RDD算子" class="headerlink" title="Spark RDD算子"></a>Spark RDD算子</h3><ul>
+<li><p>RDD算子：分布式数据集,能并行计算操作的且具有高可靠、可容错、自动感知的集合</p>
+</li>
+<li><p>RDD分为两种：1.Transformation(转换):延迟执行；2.Action(动作)：马上执行</p>
+</li>
+<li><p>RDD主要属性：</p>
+<p>  1.作用于分区</p>
+<p>  2.多个不同算子RDD</p>
+<p>  3.可以依赖于不同RDD</p>
+<p>  4.默认key-value 分区</p>
+<p>  5.能自动选择数据位置执行RDD操作（计算任务会尽可能分配到数据库的存储位置）</p>
+</li>
+<li><p>RDD 依赖关系</p>
+</li>
+</ul>
+<p>窄依赖：指的是每一个父RDD只会传递到唯一的子RDD中</p>
+<p>宽依赖：指定是每一个父RDD能传递到1个或多个的子RDD中</p>
+<p><img src="https://note.youdao.com/favicon.ico" alt="image"></p>
+<ul>
+<li>RDD常用算子介绍</li>
+</ul>
+<p>Transformation算子</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>map（func）</td>
+<td>返回新rdd,可用于将输入元素经过转换获得类似map形式</td>
+</tr>
+<tr>
+<td>filter(func)</td>
+<td>返回新rdd,可用于过滤元素</td>
+</tr>
+<tr>
+<td>flatMap（func）</td>
+<td>返回新rdd,先扁平化,后map</td>
+</tr>
+<tr>
+<td>mapPartitions(func)</td>
+<td>作用于分区的map</td>
+</tr>
+<tr>
+<td>mapPartitionsWithIndex(func)</td>
+<td>作用于分区的map，有每个分区的索引值</td>
+</tr>
+<tr>
+<td>reduceByKey(func, [numTasks])</td>
+<td>经过函数func合并相同的key,返回rdd</td>
+</tr>
+<tr>
+<td>groupByKey([numTasks])</td>
+<td>合并相同的key,生成迭代器</td>
+</tr>
+<tr>
+<td>union(otherDataset)</td>
+<td>两个RDD求并集，返回RDD</td>
+</tr>
+<tr>
+<td>intersection(otherDataset)</td>
+<td>对源RDD和参数RDD求交集后返回一个新的RDD</td>
+</tr>
+<tr>
+<td>distinct([numTasks]))</td>
+<td>对源RDD去重</td>
+</tr>
+<tr>
+<td>sortBy(func,[ascending], [numTasks])</td>
+<td>经过函数排序RDD</td>
+</tr>
+</tbody></table>
+<p>Action算子</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>reduce(func)</td>
+<td>通过func函数聚集RDD中的所有元素</td>
+</tr>
+<tr>
+<td>collect()</td>
+<td>以数组的形式返回数据集的所有元素</td>
+</tr>
+<tr>
+<td>count()</td>
+<td>返回RDD的元素个数</td>
+</tr>
+<tr>
+<td>first()</td>
+<td>返回RDD的第一个元素（类似于take(1)）</td>
+</tr>
+<tr>
+<td>take(n)</td>
+<td>返回第n个元素</td>
+</tr>
+<tr>
+<td>saveAsTextFile(path)</td>
+<td>将RDD数据保存至文件系统中</td>
+</tr>
+<tr>
+<td>countByKey()</td>
+<td>针对(K,V)类型的RDD，返回一个(K,Int)的map，表示每一个key对应的元素个数。</td>
+</tr>
+<tr>
+<td>foreach(func)</td>
+<td>在每个RDD中执行func元素</td>
+</tr>
+</tbody></table>
+<ul>
+<li>RDD 其他信息</li>
+</ul>
+<p>广播变量：针对同一个app，共享数据到不同的worker上面</p>
+<p>Lineage:将创建RDD的一系列信息记录下来，记录RDD的元数据和转换行为，以防RDD部分分区丢失的时候可以重新对这部分分区进行计算</p>
+<p>RDD提供缓存功能:cache()</p>
+<p>RDD提供checkPoint功能,可以将某阶段RDD数据存储到分布式的系统中（如hdfs）</p>
+<h3 id="Spark执行结构"><a href="#Spark执行结构" class="headerlink" title="Spark执行结构"></a>Spark执行结构</h3><p><img src="/images/bdata/spark.png" alt="spark-sql"></p>
+<p>Driver:用户提交的应用程序代码在spark中运行起来就是一个driver，用户提交的程序运行起来就是一个driver，他是一个一段特殊的excutor进程，这个进程除了一般excutor都具有的运行环境外，这个进程里面运行着DAGscheduler,Tasksheduler Schedulerbackedn等组件。</p>
+<p>Master:管理所有的worker,进而资源调度<br>Worker:管理当前计算节点,worker会启动一个executor来完成真正计算<br>Executor:真正执行任务的jvm</p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>
