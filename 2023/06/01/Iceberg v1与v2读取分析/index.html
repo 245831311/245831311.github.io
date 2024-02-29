@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Iceberg v1与v2表读取分析 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E8%83%8C%E6%99%AF"><span class="toc-text">1.背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%B5%8B%E8%AF%95%E6%96%B9%E5%BC%8F"><span class="toc-text">2.测试方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E5%87%86%E5%A4%87"><span class="toc-text">2.1 准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E8%AF%BB%E5%8F%96%E7%BB%93%E6%9E%9C"><span class="toc-text">2.2 读取结果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-V1%E8%A1%A8%E8%AF%BB%E5%8F%96%E7%BB%93%E6%9E%9C"><span class="toc-text">2.2.1 V1表读取结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-V2%E8%A1%A8%E8%AF%BB%E5%8F%96%E7%BB%93%E6%9E%9C"><span class="toc-text">2.2.2 V2表读取结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%80%9D%E8%80%83"><span class="toc-text">3 思考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%A0%E6%88%90%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">为什么造成这个问题</span></a></li></ol></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Iceberg v1与v2表读取分析
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2023-06-01 12:00:00</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#大数据" title="大数据">大数据</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#Iceberg" title="Iceberg">Iceberg</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="1-背景"><a href="#1-背景" class="headerlink" title="1.背景"></a>1.背景</h1><p>对于千万级别数据量的情况下，出现了v1,v2表读数据的超时问题，在这篇文章中，具体对比一下相同v1,v2表中读取的表现。</p>
+<h1 id="2-测试方式"><a href="#2-测试方式" class="headerlink" title="2.测试方式"></a>2.测试方式</h1><h2 id="2-1-准备"><a href="#2-1-准备" class="headerlink" title="2.1 准备"></a>2.1 准备</h2><p>V1建表sql</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">-- from table hycan-ums.message_push_detail_0</span><br><span class="line">CREATE TABLE IF NOT EXISTS iceberg.ods_hycan_ums.ods_message_push_detail_v1_notpart (</span><br><span class="line">    `id` bigint not null,</span><br><span class="line">    `message_config_id` bigint,</span><br><span class="line">    `message_content_id` bigint,</span><br><span class="line">    `task_id` bigint,</span><br><span class="line">    `push_type` string,</span><br><span class="line">    `user_id` int,</span><br><span class="line">    `phone` string,</span><br><span class="line">    `nickname` string,</span><br><span class="line">    `message_snapshot` string,</span><br><span class="line">    `push_status` string,</span><br><span class="line">    `third_msg_id` string,</span><br><span class="line">    `view` int,</span><br><span class="line">    `open_status` string,</span><br><span class="line">    `create_id` bigint,</span><br><span class="line">    `create_time` timestamp,</span><br><span class="line">    `update_id` bigint,</span><br><span class="line">    `update_time` timestamp,</span><br><span class="line">    `_create_date` string,</span><br><span class="line">    primary key(`id`) NOT ENFORCED</span><br><span class="line">)</span><br><span class="line">with (</span><br><span class="line">    &#x27;format&#x27; = &#x27;PARQUET&#x27;,</span><br><span class="line">    &#x27;format-version&#x27; = &#x27;1&#x27;,</span><br><span class="line">    &#x27;write.metadata.previous-versions-max&#x27; = &#x27;10&#x27;,</span><br><span class="line">    &#x27;write.metadata.delete-after-commit.enabled&#x27; = &#x27;true&#x27;</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>V2建表sql</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">-- from table hycan-ums.message_push_detail_0</span><br><span class="line">CREATE TABLE IF NOT EXISTS iceberg.ods_hycan_ums.ods_message_push_detail_v2_notpart (</span><br><span class="line">    `id` bigint not null,</span><br><span class="line">    `message_config_id` bigint,</span><br><span class="line">    `message_content_id` bigint,</span><br><span class="line">    `task_id` bigint,</span><br><span class="line">    `push_type` string,</span><br><span class="line">    `user_id` int,</span><br><span class="line">    `phone` string,</span><br><span class="line">    `nickname` string,</span><br><span class="line">    `message_snapshot` string,</span><br><span class="line">    `push_status` string,</span><br><span class="line">    `third_msg_id` string,</span><br><span class="line">    `view` int,</span><br><span class="line">    `open_status` string,</span><br><span class="line">    `create_id` bigint,</span><br><span class="line">    `create_time` timestamp,</span><br><span class="line">    `update_id` bigint,</span><br><span class="line">    `update_time` timestamp,</span><br><span class="line">    `_create_date` string,</span><br><span class="line">    primary key(`id`) NOT ENFORCED</span><br><span class="line">)</span><br><span class="line">with (</span><br><span class="line">    &#x27;format&#x27; = &#x27;PARQUET&#x27;,</span><br><span class="line">    &#x27;format-version&#x27; = &#x27;2&#x27;,</span><br><span class="line">    &#x27;write.metadata.previous-versions-max&#x27; = &#x27;10&#x27;,</span><br><span class="line">    &#x27;write.metadata.delete-after-commit.enabled&#x27; = &#x27;true&#x27;,</span><br><span class="line">    &#x27;write.upsert.enabled&#x27; = &#x27;true&#x27;</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-读取结果"><a href="#2-2-读取结果" class="headerlink" title="2.2 读取结果"></a>2.2 读取结果</h2><h3 id="2-2-1-V1表读取结果"><a href="#2-2-1-V1表读取结果" class="headerlink" title="2.2.1 V1表读取结果"></a>2.2.1 V1表读取结果</h3><p><img src="/images/bdata/v1%E8%AF%BB%E5%8F%96%E5%88%86%E6%9E%90.jpg" alt="v1读取结果"></p>
+<h3 id="2-2-2-V2表读取结果"><a href="#2-2-2-V2表读取结果" class="headerlink" title="2.2.2 V2表读取结果"></a>2.2.2 V2表读取结果</h3><p><img src="/images/bdata/v2%E8%AF%BB%E5%8F%96%E5%88%86%E6%9E%90.jpg" alt="v2读取结果"></p>
+<h2 id="3-思考"><a href="#3-思考" class="headerlink" title="3 思考"></a>3 思考</h2><h3 id="为什么造成这个问题"><a href="#为什么造成这个问题" class="headerlink" title="为什么造成这个问题"></a>为什么造成这个问题</h3><p>1.v1表与v2表功能差异</p>
+<p>V1定义了如何来管理大型分析型的表，包括元数据文件、属性、数据类型、表的模式，分区信息，以及如何写入与读取。<br>V2表则是在V1表基础上进行了扩展，首要的是实现了行级数据的更新与删除功能，引入了delete file记录需要删除的数据</p>
+<p>删除行数据的方式分为两种：Equality Deletes和Position Deletes。</p>
+<p>2.如何确认猜想?</p>
+<p>可以通过源码进行debug,目前经过排查确认在获取数据的时候进行了delete file过滤，导致问题.<br><img src="/images/bdata/Iceberg%E6%BA%90%E7%A0%81%E8%AF%BB%E5%8F%96%E5%88%86%E6%9E%90.jpg" alt="delete file慢问题"></p>
+<p>3.解决方案<br>定期合并delete files小文件<br>order优化、bloomfilter？</p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>

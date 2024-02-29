@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Flink Sql源码分析 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-x20-flink-connector-jdbc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-text">1.  flink-connector-jdbc源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-JdbcDynamicTableFactory"><span class="toc-text">1.1. JdbcDynamicTableFactory</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-JdbcDynamicTableSource"><span class="toc-text">1.2. JdbcDynamicTableSource</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-JdbcDynamicTableSink"><span class="toc-text">1.3. JdbcDynamicTableSink</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-JdbcCatalogFactory"><span class="toc-text">1.4. JdbcCatalogFactory</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-flink-sql%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="toc-text">2. flink sql解析过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91%EF%BC%9ASQLNode"><span class="toc-text">2.1. 抽象语法树：SQLNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E9%80%BB%E8%BE%91%E8%AE%A1%E5%88%92%EF%BC%9ARelNode"><span class="toc-text">2.2. 逻辑计划：RelNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E7%89%A9%E7%90%86%E8%AE%A1%E5%88%92%EF%BC%9ARelNode"><span class="toc-text">2.3. 物理计划：RelNode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-Flink%E7%AE%97%E5%AD%90%EF%BC%9ATransformation"><span class="toc-text">2.4. Flink算子：Transformation</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-flink-sql%E5%A6%82%E4%BD%95%E5%85%B3%E8%81%94flink-connector-jdbc%E5%8C%85"><span class="toc-text">3. flink sql如何关联flink-connector-jdbc包</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-flink-sql-task%EF%BC%9A"><span class="toc-text">3.1. flink sql task：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-flink-connector-jdbc%E5%8C%85%E5%88%9B%E5%BB%BAJdbcRowDataInputFormat"><span class="toc-text">3.2. flink-connector-jdbc包创建JdbcRowDataInputFormat</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-inner-join%E5%92%8Clookup-join%E6%B5%8B%E8%AF%95"><span class="toc-text">4. inner join和lookup join测试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-inner-join"><span class="toc-text">4.1. inner join:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-lookup-join%EF%BC%9A"><span class="toc-text">4.2. lookup join：</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Flink Sql源码分析
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2023-07-10 11:16:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#Flink" title="Flink">Flink</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="1-x20-flink-connector-jdbc源码分析"><a href="#1-x20-flink-connector-jdbc源码分析" class="headerlink" title="1. &#x20;flink-connector-jdbc源码分析"></a>1. &#x20;flink-connector-jdbc源码分析</h1><p>入口：resources&#x2F;META_INF.services&#x2F;org.apache.flink.table.factories.Factory</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">org.apache.flink.connector.jdbc.table.JdbcDynamicTableFactory</span><br><span class="line">org.apache.flink.connector.jdbc.catalog.factory.JdbcCatalogFactory</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-1-JdbcDynamicTableFactory"><a href="#1-1-JdbcDynamicTableFactory" class="headerlink" title="1.1. JdbcDynamicTableFactory"></a>1.1. JdbcDynamicTableFactory</h2><p>管理DynamicTableSink、DynamicTableSource、配置信息Options，DynamicTableSink负责向表写数据，DynamicTableSource负责从表读数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JdbcDynamicTableFactory</span> <span class="keyword">implements</span> <span class="title class_">DynamicTableSourceFactory</span>, DynamicTableSinkFactory &#123;</span><br><span class="line">  <span class="keyword">public</span> DynamicTableSink <span class="title function_">createDynamicTableSink</span><span class="params">(Context context)</span>;</span><br><span class="line">  <span class="keyword">public</span> DynamicTableSource <span class="title function_">createDynamicTableSource</span><span class="params">(Context context)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-JdbcDynamicTableSource"><a href="#1-2-JdbcDynamicTableSource" class="headerlink" title="1.2. JdbcDynamicTableSource"></a>1.2. JdbcDynamicTableSource</h2><p>负责从表读数据。其中ScanRuntimeProvider是扫描表的方式，LookupRuntimeProvider是点查询的方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JdbcDynamicTableSource</span></span><br><span class="line">        <span class="keyword">implements</span> <span class="title class_">ScanTableSource</span>,</span><br><span class="line">                LookupTableSource,</span><br><span class="line">                SupportsProjectionPushDown,</span><br><span class="line">                SupportsLimitPushDown,</span><br><span class="line">                SupportsFilterPushDown &#123;</span><br><span class="line">  <span class="keyword">public</span> LookupRuntimeProvider <span class="title function_">getLookupRuntimeProvider</span><span class="params">(LookupContext context)</span>;</span><br><span class="line">  <span class="keyword">public</span> ScanRuntimeProvider <span class="title function_">getScanRuntimeProvider</span><span class="params">(ScanContext runtimeProviderContext)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-JdbcDynamicTableSink"><a href="#1-3-JdbcDynamicTableSink" class="headerlink" title="1.3. JdbcDynamicTableSink"></a>1.3. JdbcDynamicTableSink</h2><p>负责向表写数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JdbcDynamicTableSink</span> <span class="keyword">implements</span> <span class="title class_">DynamicTableSink</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> SinkRuntimeProvider <span class="title function_">getSinkRuntimeProvider</span><span class="params">(Context context)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-JdbcCatalogFactory"><a href="#1-4-JdbcCatalogFactory" class="headerlink" title="1.4. JdbcCatalogFactory"></a>1.4. JdbcCatalogFactory</h2><p>获取database、table等元数据。</p>
+<h1 id="2-flink-sql解析过程"><a href="#2-flink-sql解析过程" class="headerlink" title="2. flink sql解析过程"></a>2. flink sql解析过程</h1><ol>
+<li><p>抽象语法树：SQLNode</p>
+</li>
+<li><p>逻辑计划：RelNode</p>
+</li>
+<li><p>物理计划：RelNode</p>
+</li>
+<li><p>Flink算子：Transformation</p>
+</li>
+</ol>
+<h2 id="2-1-抽象语法树：SQLNode"><a href="#2-1-抽象语法树：SQLNode" class="headerlink" title="2.1. 抽象语法树：SQLNode"></a>2.1. 抽象语法树：SQLNode</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.flink.table.planner.delegation;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ParserImpl</span> <span class="keyword">implements</span> <span class="title class_">Parser</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> List&lt;Operation&gt; <span class="title function_">parse</span><span class="params">(String statement)</span> &#123;</span><br><span class="line">    <span class="type">CalciteParser</span> <span class="variable">parser</span> <span class="operator">=</span> calciteParserSupplier.get();</span><br><span class="line">    <span class="type">FlinkPlannerImpl</span> <span class="variable">planner</span> <span class="operator">=</span> validatorSupplier.get();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// parse the sql query</span></span><br><span class="line">    <span class="comment">// use parseSqlList here because we need to support statement end with &#x27;;&#x27; in sql client.</span></span><br><span class="line">    <span class="type">SqlNodeList</span> <span class="variable">sqlNodeList</span> <span class="operator">=</span> parser.parseSqlList(statement);</span><br><span class="line">    List&lt;SqlNode&gt; parsed = sqlNodeList.getList();</span><br><span class="line">    <span class="keyword">return</span> Collections.singletonList(</span><br><span class="line">            SqlToOperationConverter.convert(planner, catalogManager, parsed.get(<span class="number">0</span>))</span><br><span class="line">                    .orElseThrow(() -&gt; <span class="keyword">new</span> <span class="title class_">TableException</span>(<span class="string">&quot;Unsupported query: &quot;</span> + statement)));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-2-逻辑计划：RelNode"><a href="#2-2-逻辑计划：RelNode" class="headerlink" title="2.2. 逻辑计划：RelNode"></a>2.2. <strong>逻辑计划：RelNode</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.calcite.sql2rel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SqlToRelConverter</span> &#123;</span><br><span class="line">  <span class="keyword">public</span> RelRoot <span class="title function_">convertQuery</span><span class="params">(SqlNode query, <span class="keyword">final</span> <span class="type">boolean</span> needsValidation</span></span><br><span class="line"><span class="params">						, <span class="keyword">final</span> <span class="type">boolean</span> top)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-3-物理计划：RelNode"><a href="#2-3-物理计划：RelNode" class="headerlink" title="2.3. 物理计划：RelNode"></a>2.3. <strong>物理计划：RelNode</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.calcite.plan.hep;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 基于规则的优化器</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HepPlanner</span> <span class="keyword">extends</span> <span class="title class_">AbstractRelOptPlanner</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">applyRules</span><span class="params">(Collection&lt;RelOptRule&gt; rules, <span class="type">boolean</span> forceConversions)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-4-Flink算子：Transformation"><a href="#2-4-Flink算子：Transformation" class="headerlink" title="2.4. Flink算子：Transformation"></a>2.4. <strong>Flink算子：Transformation</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.flink.table.planner.plan.nodes.exec.batch;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BatchExecSink</span> <span class="keyword">extends</span> <span class="title class_">CommonExecSink</span> <span class="keyword">implements</span> <span class="title class_">BatchExecNode</span>&lt;Object&gt; &#123;</span><br><span class="line">  <span class="keyword">protected</span> Transformation&lt;Object&gt; <span class="title function_">translateToPlanInternal</span><span class="params">(PlannerBase planner, ExecNodeConfig config)</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-flink-sql如何关联flink-connector-jdbc包"><a href="#3-flink-sql如何关联flink-connector-jdbc包" class="headerlink" title="3. flink sql如何关联flink-connector-jdbc包"></a>3. flink sql如何关联flink-connector-jdbc包</h1><h2 id="3-1-flink-sql-task："><a href="#3-1-flink-sql-task：" class="headerlink" title="3.1. flink sql task："></a>3.1. flink sql task：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SourceStreamTask.LegacySourceFunctionThread.run():</span><br><span class="line">  StreamSource.run():</span><br><span class="line">    InputFormatSourceFunction.run():</span><br><span class="line">      JdbcRowDataInputFormat.openInputFormat():</span><br><span class="line">        <span class="comment">//创建jdbc连接</span></span><br><span class="line">        <span class="type">Connection</span> <span class="variable">dbConn</span> <span class="operator">=</span> connectionProvider.getOrEstablishConnection();</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2-flink-connector-jdbc包创建JdbcRowDataInputFormat"><a href="#3-2-flink-connector-jdbc包创建JdbcRowDataInputFormat" class="headerlink" title="3.2. flink-connector-jdbc包创建JdbcRowDataInputFormat"></a>3.2. flink-connector-jdbc包创建JdbcRowDataInputFormat</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JdbcDynamicTableSource.getScanRuntimeProvider():</span><br><span class="line">  <span class="keyword">new</span> <span class="title class_">JdbcRowDataInputFormat</span>()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="4-inner-join和lookup-join测试"><a href="#4-inner-join和lookup-join测试" class="headerlink" title="4. inner join和lookup join测试"></a>4. inner join和lookup join测试</h1><ol>
+<li><p>通过tenv.explainSql(sql)输出抽象语法树、逻辑执行计划、物理执行计划</p>
+</li>
+<li><p>转成DataStream API，通过env.getExecutionPlan()输出flink算子</p>
+</li>
+<li><p>lookup join是一条条地lookup，效率很低</p>
+</li>
+</ol>
+<h2 id="4-1-inner-join"><a href="#4-1-inner-join" class="headerlink" title="4.1. inner join:"></a>4.1. inner join:</h2><ol>
+<li><p>where条件会下推</p>
+</li>
+<li><p>limit不会下推</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">scan</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Configuration</span> <span class="variable">conf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Configuration</span>();</span><br><span class="line">    <span class="type">StreamExecutionEnvironment</span> <span class="variable">env</span> <span class="operator">=</span> StreamExecutionEnvironment.createLocalEnvironment(conf);</span><br><span class="line">    <span class="type">EnvironmentSettings</span> <span class="variable">settings</span> <span class="operator">=</span> EnvironmentSettings.newInstance().inBatchMode().build();</span><br><span class="line">    <span class="type">StreamTableEnvironment</span> <span class="variable">tenv</span> <span class="operator">=</span> StreamTableEnvironment.create(env, settings);</span><br><span class="line"></span><br><span class="line">    <span class="type">JdbcCatalog</span> <span class="variable">jdbcCatalog</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JdbcCatalog</span>(Thread.currentThread().getContextClassLoader(),</span><br><span class="line">            <span class="string">&quot;mysql&quot;</span>, <span class="string">&quot;gacnio-community&quot;</span>,</span><br><span class="line">            <span class="string">&quot;hycan-read&quot;</span>, <span class="string">&quot;g8AxryVH*r%G3f&quot;</span>,</span><br><span class="line">            <span class="string">&quot;jdbc:mysql://192.168.1.192:3317&quot;</span>);</span><br><span class="line">    tenv.registerCatalog(jdbcCatalog.getName(), jdbcCatalog);</span><br><span class="line">    tenv.useCatalog(jdbcCatalog.getName());</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">sql</span> <span class="operator">=</span> <span class="comment">//</span></span><br><span class="line">            <span class="string">&quot;select ua.id, ua.content_id, ua.action_type, ua.create_time, ua.create_id, uc.content \n&quot;</span> +</span><br><span class="line">                    <span class="string">&quot;from `gacnio-community`.user_action ua \n&quot;</span> +</span><br><span class="line">                    <span class="string">&quot;join `gacnio-community`.ugc_content uc \n&quot;</span> +</span><br><span class="line">                    <span class="string">&quot;on ua.content_id = uc.id \n&quot;</span> +</span><br><span class="line">                    <span class="string">&quot;where ua.type = 1 and ua.content_type = 1 limit 10&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">plan</span> <span class="operator">=</span> tenv.explainSql(sql, ExplainDetail.ESTIMATED_COST);</span><br><span class="line">    System.out.println(plan);</span><br><span class="line"></span><br><span class="line">    <span class="type">TableResult</span> <span class="variable">result</span> <span class="operator">=</span> tenv.executeSql(sql);</span><br><span class="line">    result.print();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-2-lookup-join："><a href="#4-2-lookup-join：" class="headerlink" title="4.2. lookup join："></a>4.2. lookup join：</h2><ol>
+<li><p>配置：表options：’lookup.cache’&#x3D;’PARTIAL’，sql：FOR SYSTEM_TIME AS OF ua.proctime</p>
+</li>
+<li><p>一条条lookup</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">lookup</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Configuration</span> <span class="variable">conf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Configuration</span>();</span><br><span class="line">    <span class="type">StreamExecutionEnvironment</span> <span class="variable">env</span> <span class="operator">=</span> StreamExecutionEnvironment.createLocalEnvironment(conf);</span><br><span class="line">    <span class="type">EnvironmentSettings</span> <span class="variable">settings</span> <span class="operator">=</span> EnvironmentSettings.newInstance().inBatchMode().build();</span><br><span class="line">    <span class="type">StreamTableEnvironment</span> <span class="variable">tenv</span> <span class="operator">=</span> StreamTableEnvironment.create(env, settings);</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">sql1</span> <span class="operator">=</span> <span class="comment">//</span></span><br><span class="line">            <span class="string">&quot;CREATE TABLE user_action(\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tid int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tcontent_id int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\taction_type int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\ttype int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tcontent_type int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tcreate_time timestamp,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tcreate_id int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tproctime AS PROCTIME()\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;)\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;WITH(\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;connector&#x27;=&#x27;jdbc&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;url&#x27;=&#x27;jdbc:mysql://192.168.1.192:3317/gacnio-community&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;table-name&#x27;=&#x27;user_action&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;username&#x27;=&#x27;hycan-read&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;password&#x27;=&#x27;g8AxryVH*r%G3f&#x27;\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;);&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">sql2</span> <span class="operator">=</span> <span class="string">&quot;CREATE TABLE ugc_content(\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tid int,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\tcontent string\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;)\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;WITH(\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;connector&#x27;=&#x27;jdbc&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;url&#x27;=&#x27;jdbc:mysql://192.168.1.192:3317/gacnio-community&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;table-name&#x27;=&#x27;ugc_content&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;username&#x27;=&#x27;hycan-read&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;password&#x27;=&#x27;g8AxryVH*r%G3f&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;lookup.cache&#x27;=&#x27;PARTIAL&#x27;,\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;\t&#x27;lookup.partial-cache.max-rows&#x27;=&#x27;1000&#x27;\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;);&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">sql3</span> <span class="operator">=</span> <span class="string">&quot;select ua.id, ua.content_id, ua.action_type, ua.create_time, ua.create_id, uc.content\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;from user_action as ua\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;join ugc_content FOR SYSTEM_TIME AS OF ua.proctime as uc\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;on ua.content_id = uc.id\n&quot;</span> +</span><br><span class="line">            <span class="string">&quot;where ua.type = 1 and ua.content_type = 1 limit 10&quot;</span>;</span><br><span class="line"></span><br><span class="line">    String[] sqls = <span class="keyword">new</span> <span class="title class_">String</span>[] &#123;sql1, sql2&#125;;</span><br><span class="line">    <span class="keyword">for</span> (String sql : sqls) &#123;</span><br><span class="line">        <span class="type">TableResult</span> <span class="variable">result</span> <span class="operator">=</span> tenv.executeSql(sql);</span><br><span class="line">        result.print();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">plan</span> <span class="operator">=</span> tenv.explainSql(sql3, ExplainDetail.ESTIMATED_COST);</span><br><span class="line">    System.out.println(plan);</span><br><span class="line"></span><br><span class="line">    <span class="type">TableResult</span> <span class="variable">result</span> <span class="operator">=</span> tenv.executeSql(sql3);</span><br><span class="line">    result.print();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>
