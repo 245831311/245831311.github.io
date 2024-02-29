@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="罗海杰博客">
+    <meta property="og:type" content="website">
+    <meta name="description" content="罗海杰博客">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Flink状态与容错 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> there is a will,there is a way </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/images/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>haijie Luo</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%AE%9A%E4%B9%89"><span class="toc-text">1.定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-flink%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="toc-text">2.flink状态：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%90%8E%E7%AB%AF%EF%BC%9A%E7%8A%B6%E6%80%81%E5%AD%98%E5%82%A8%E5%AA%92%E4%BB%8B"><span class="toc-text">状态后端：状态存储媒介</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-flink-%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6"><span class="toc-text">3.flink 容错机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%B9%E9%94%99%EF%BC%9A"><span class="toc-text">容错：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="toc-text">持久化流程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E6%B5%81%E7%A8%8B%EF%BC%9A%E5%85%83%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96-%E7%8A%B6%E6%80%81%E9%87%8D%E5%88%86%E9%85%8D-%E7%8A%B6%E6%80%81%E6%95%B0%E6%8D%AE%E6%81%A2%E5%A4%8D"><span class="toc-text">恢复流程：元数据读取-&gt;状态重分配-&gt;状态数据恢复</span></a></li></ol></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> there is a will,there is a way </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Flink状态与容错
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2023-10-29 00:00:00</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#Flink" title="Flink">Flink</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <h1 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h1><p>&#x9;状态：任务在某一刻中存在内存中的数值或字段</p>
+<p>&#x9;容错：任务中途停止或异常，能从当前位置恢复运行，而不用重头开始。</p>
+<h1 id="2-flink状态："><a href="#2-flink状态：" class="headerlink" title="2.flink状态："></a>2.flink状态：</h1><p>&#x9;ValueState:只能保存一个值</p>
+<p>&#x9;MapState:保留映射</p>
+<p>&#x9;ListState:保留列表</p>
+<p>&#x9;ReducingState:只保留单值，且添加到状态里所有值的聚合</p>
+<p>&#x9;AggregatingState:保留每个IN的对应所有值的聚合，适合不同类型&#x9;</p>
+<h2 id="状态后端：状态存储媒介"><a href="#状态后端：状态存储媒介" class="headerlink" title="状态后端：状态存储媒介"></a>状态后端：状态存储媒介</h2><p>&#x9;MemoryStateBackend</p>
+<p>&#x9;FsStateBackend</p>
+<p>&#x9;RocksDBStateBackend</p>
+<h1 id="3-flink-容错机制"><a href="#3-flink-容错机制" class="headerlink" title="3.flink 容错机制"></a>3.flink 容错机制</h1><p>Flink容错机制是基于checkpoint 方式即 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Chandy-Lamport_algorithm">Chandy-Lamport algorithm</a> 算法的一种变体。</p>
+<p>容错机制需从两个方面界定：持久化与恢复</p>
+<h2 id="容错："><a href="#容错：" class="headerlink" title="容错："></a>容错：</h2><p>&#x20; Checkpoint Coordinator: 存在于JobManager中，与任务通讯、发送栅栏信息、存储checkpoint元信息等</p>
+<p>&#x20; barrier:栅栏，任务checkpoint触发点</p>
+<p><img src="/images/bdata/%E6%8C%81%E4%B9%85%E5%8C%96%E6%B5%81%E7%A8%8B.jpg" alt="容错"></p>
+<h3 id="持久化流程："><a href="#持久化流程：" class="headerlink" title="持久化流程："></a>持久化流程：</h3><ol>
+<li>Checkpoint Coordinator初始化包括检查是否满足条件，如任务是否Running状态、间隔时间是否满足、并行checkpoint个数等；初始化任务监听器；开启定时器周期性执行；</li>
+</ol>
+<!---->
+
+<ol>
+<li>Checkpoint Coordinantor 执行triggerCheckpoint将栅栏发送到TaskExecutor的source当中，source接收到会先检查checkpoint,然后栅栏传到下游算子，最后调用异步执行快照。</li>
+</ol>
+<!---->
+
+<ol>
+<li>栅栏在传到下游算子时，是否需要对齐栅栏，决定了语义是exactly once 还是 at least once。对于exactly once语义，在未曾接收到所有上游栅栏时，会阻塞数据并存于buffer缓冲区中，当足够时候才会一同处理。而at least once则不需要阻塞。</li>
+</ol>
+<!---->
+
+<ol>
+<li>异步执行快照，主要是对任务的算则执行snapshotState的方法，最后会将checkpoint数据封装成ack对象发送到checkpoint coordinator中，并且落盘到本地盘中。</li>
+</ol>
+<!---->
+
+<ol>
+<li>Checkpoint Coordinator当所有任务完成checkpoint时候，会将checkpoint元数据存储到引擎当中保存。</li>
+</ol>
+<p><img src="/images/bdata/%E6%81%A2%E5%A4%8D%E6%B5%81%E7%A8%8B.jpg" alt="容错"></p>
+<h3 id="恢复流程：元数据读取-状态重分配-状态数据恢复"><a href="#恢复流程：元数据读取-状态重分配-状态数据恢复" class="headerlink" title="恢复流程：元数据读取-&gt;状态重分配-&gt;状态数据恢复"></a>恢复流程：元数据读取-&gt;状态重分配-&gt;状态数据恢复</h3><ol>
+<li>在初始化Checkpoint Coordinator的时候会首先读取是否存在checkpoint元数据文件，并获取最新的文件加载起来。</li>
+</ol>
+<!---->
+
+<ol>
+<li>然后将状态元数据信息按照平行度分配到不同新的并行实例中；重分配操作符有三种：split_distribute、union、broadcast,一般是在代码中创建状态时候就能指定。</li>
+</ol>
+<!---->
+
+<ol>
+<li>并行实例根据元数据信息读取数据，并恢复运行；</li>
+</ol>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>
