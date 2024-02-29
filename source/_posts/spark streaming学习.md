@@ -4,7 +4,7 @@ date: 2021-08-27 11:16:39
 categories: 
 - 大数据
 tags:
-- 大数据
+- Spark
 ---
 
 # Spark Streaming基础知识点

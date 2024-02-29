@@ -4,14 +4,14 @@ date: 2021-08-27 11:16:39
 categories: 
 - 大数据
 tags:
-- 大数据
+- Spark
 ---
 
 # Spark入门知识
 
 ## Spark总体图
 
-![image](file:///D:/%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91/spark.jpg)
+![image](/images/bdata/spark.jpg)
 
 ## Spark基础知识
 
@@ -41,7 +41,6 @@ tags:
 
 宽依赖：指定是每一个父RDD能传递到1个或多个的子RDD中
 
-![image](https://note.youdao.com/favicon.ico)
 
 - RDD常用算子介绍
 
